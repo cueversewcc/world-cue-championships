@@ -1,0 +1,42 @@
+{
+  "name": "PlayoffMatch",
+  "type": "object",
+  "properties": {
+    "round": {
+      "type": "string",
+      "enum": [
+        "R16",
+        "QF",
+        "SF",
+        "F"
+      ]
+    },
+    "slot": {
+      "type": "number"
+    },
+    "player1": {
+      "type": "string",
+      "default": ""
+    },
+    "player2": {
+      "type": "string",
+      "default": ""
+    },
+    "score1": {
+      "type": "number",
+      "default": 0
+    },
+    "score2": {
+      "type": "number",
+      "default": 0
+    },
+    "winner": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "round",
+    "slot"
+  ]
+}

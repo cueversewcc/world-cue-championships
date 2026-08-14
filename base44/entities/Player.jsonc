@@ -1,0 +1,44 @@
+{
+  "name": "Player",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "group": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B"
+      ]
+    },
+    "played": {
+      "type": "number",
+      "default": 0
+    },
+    "wins": {
+      "type": "number",
+      "default": 0
+    },
+    "losses": {
+      "type": "number",
+      "default": 0
+    },
+    "frames_for": {
+      "type": "number",
+      "default": 0
+    },
+    "frames_against": {
+      "type": "number",
+      "default": 0
+    },
+    "points": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "name",
+    "group"
+  ]
+}

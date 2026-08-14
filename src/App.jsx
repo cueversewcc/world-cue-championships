@@ -6,7 +6,11 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
-// Add page imports here
+import Layout from './components/Layout';
+import Home from './pages/Home';
+import GroupStage from './pages/GroupStage';
+import Playoffs from './pages/Playoffs';
+import Rules from './pages/Rules';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -34,7 +38,12 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      {/* Add your page Route elements here */}
+      <Route element={<Layout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/group-stage" element={<GroupStage />} />
+        <Route path="/playoffs" element={<Playoffs />} />
+        <Route path="/rules" element={<Rules />} />
+      </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
