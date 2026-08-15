@@ -1,0 +1,61 @@
+{
+  "name": "PastTournament",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "season": {
+      "type": "string",
+      "default": ""
+    },
+    "champion": {
+      "type": "string",
+      "default": ""
+    },
+    "runnerUp": {
+      "type": "string",
+      "default": ""
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
+    "order": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "title"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

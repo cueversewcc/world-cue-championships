@@ -7,6 +7,10 @@ const nav = [
   { to: "/", label: "Home" },
   { to: "/group-stage", label: "Group Stage" },
   { to: "/playoffs", label: "Playoffs" },
+  { to: "/team-play", label: "Team Play" },
+  { to: "/predictions", label: "Predictions" },
+  { to: "/7-second", label: "7 Second" },
+  { to: "/history", label: "History" },
   { to: "/rules", label: "Rules" },
 ];
 
@@ -27,7 +31,7 @@ export default function Layout() {
                 <Link
                   key={n.to}
                   to={n.to}
-                  className={`px-3 py-2 text-[11px] sm:text-xs uppercase tracking-[0.15em] rounded-md transition-colors duration-300 ${
+                  className={`px-2.5 py-2 text-[10px] sm:text-[11px] uppercase tracking-[0.15em] rounded-md transition-colors duration-300 ${
                     pathname === n.to ? "text-red-500 bg-red-600/10" : "text-zinc-400 hover:text-zinc-100"
                   }`}
                 >

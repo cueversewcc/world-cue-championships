@@ -10,6 +10,10 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import GroupStage from './pages/GroupStage';
 import Playoffs from './pages/Playoffs';
+import TeamPlay from './pages/TeamPlay';
+import Predictions from './pages/Predictions';
+import History from './pages/History';
+import SevenSecond from './pages/SevenSecond';
 import Rules from './pages/Rules';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Login from '@/pages/Login';
@@ -51,6 +55,10 @@ const AuthenticatedApp = () => {
         <Route path="/" element={<Home />} />
         <Route path="/group-stage" element={<GroupStage />} />
         <Route path="/playoffs" element={<Playoffs />} />
+        <Route path="/team-play" element={<TeamPlay />} />
+        <Route path="/predictions" element={<Predictions />} />
+        <Route path="/7-second" element={<SevenSecond />} />
+        <Route path="/history" element={<History />} />
         <Route path="/rules" element={<Rules />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
