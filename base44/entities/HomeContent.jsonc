@@ -1,0 +1,39 @@
+{
+  "name": "HomeContent",
+  "type": "object",
+  "properties": {
+    "season": {
+      "type": "string"
+    },
+    "title_top": {
+      "type": "string"
+    },
+    "title_bottom": {
+      "type": "string"
+    },
+    "subtitle": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title_top"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
