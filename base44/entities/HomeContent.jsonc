@@ -13,6 +13,18 @@
     },
     "subtitle": {
       "type": "string"
+    },
+    "stat_players": {
+      "type": "string",
+      "default": ""
+    },
+    "stat_playoffs": {
+      "type": "string",
+      "default": ""
+    },
+    "stat_groups": {
+      "type": "string",
+      "default": ""
     }
   },
   "required": [

@@ -26,20 +26,20 @@ export default function Home() {
     });
   }, []);
 
-  const startEdit = () => { setDraft(content ? { ...content } : { season: "", title_top: "", title_bottom: "", subtitle: "" }); setEditing(true); };
+  const startEdit = () => { setDraft(content ? { ...content } : { season: "", title_top: "", title_bottom: "", subtitle: "", stat_players: "", stat_playoffs: "", stat_groups: "" }); setEditing(true); };
 
   const save = async () => {
     setSaving(true);
     try {
+      const payload = {
+        season: draft.season, title_top: draft.title_top, title_bottom: draft.title_bottom, subtitle: draft.subtitle,
+        stat_players: draft.stat_players, stat_playoffs: draft.stat_playoffs, stat_groups: draft.stat_groups,
+      };
       if (content?.id) {
-        const updated = await base44.entities.HomeContent.update(content.id, {
-          season: draft.season, title_top: draft.title_top, title_bottom: draft.title_bottom, subtitle: draft.subtitle,
-        });
+        const updated = await base44.entities.HomeContent.update(content.id, payload);
         setContent(updated);
       } else {
-        const created = await base44.entities.HomeContent.create({
-          season: draft.season, title_top: draft.title_top, title_bottom: draft.title_bottom, subtitle: draft.subtitle,
-        });
+        const created = await base44.entities.HomeContent.create(payload);
         setContent(created);
       }
       setEditing(false);
@@ -47,6 +47,7 @@ export default function Home() {
   };
 
   const leaders = [...players].sort(sortPlayers).slice(0, 5);
+  const top10 = [...players].sort(sortPlayers).slice(0, 10);
   const c = editing ? draft : content;
   const field = (k) => ({
     value: (editing ? draft[k] : content?.[k]) || "",
@@ -117,17 +118,27 @@ export default function Home() {
 
       <section className="max-w-6xl mx-auto px-6 grid sm:grid-cols-3 gap-4">
         {[
-          { icon: Users, k: `${players.length}`, l: "Players Registered", to: "/group-stage" },
-          { icon: Trophy, k: "16", l: "Playoff Places", to: "/playoffs" },
-          { icon: ScrollText, k: "2", l: "Groups", to: "/rules" },
-        ].map((s) => (
-          <Link key={s.l} to={s.to}
-            className="rounded-2xl border border-white/5 bg-white/[0.02] p-6 hover:border-red-600/30 transition-colors duration-300">
-            <s.icon className="w-5 h-5 text-red-600 mb-6" />
-            <p className="font-heading text-3xl tracking-tight">{s.k}</p>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 mt-2">{s.l}</p>
-          </Link>
-        ))}
+          { icon: Users, key: "stat_players", fallback: `${players.length}`, l: "Players Registered", to: "/group-stage" },
+          { icon: Trophy, key: "stat_playoffs", fallback: "16", l: "Playoff Places", to: "/playoffs" },
+          { icon: ScrollText, key: "stat_groups", fallback: "2", l: "Groups", to: "/rules" },
+        ].map((s) => {
+          const val = editing ? (draft[s.key] ?? s.fallback) : (content?.[s.key] || s.fallback);
+          const Card = editing ? "div" : Link;
+          const cardProps = editing ? {} : { to: s.to };
+          return (
+            <Card key={s.l} {...cardProps}
+              className="rounded-2xl border border-white/5 bg-white/[0.02] p-6 hover:border-red-600/30 transition-colors duration-300">
+              <s.icon className="w-5 h-5 text-red-600 mb-6" />
+              {editing ? (
+                <input value={val} onChange={(e) => setDraft((d) => ({ ...d, [s.key]: e.target.value }))}
+                  className="font-heading text-3xl tracking-tight bg-transparent border-b border-white/10 focus:border-red-600 outline-none w-full" />
+              ) : (
+                <p className="font-heading text-3xl tracking-tight">{val}</p>
+              )}
+              <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 mt-2">{s.l}</p>
+            </Card>
+          );
+        })}
       </section>
 
       <section className="max-w-6xl mx-auto px-6 mt-20">
@@ -149,6 +160,55 @@ export default function Home() {
               <span className="text-sm text-red-500 font-semibold tabular-nums w-10 text-right">{p.points ?? 0}</span>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-6 mt-20">
+        <div className="flex items-baseline justify-between mb-6">
+          <h2 className="font-heading text-2xl tracking-tight">Top 10 Overall</h2>
+          <Link to="/group-stage" className="text-[11px] uppercase tracking-[0.2em] text-red-600 hover:text-red-500">
+            Full tables
+          </Link>
+        </div>
+        <div className="rounded-2xl border border-white/5 bg-white/[0.02] overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-[10px] uppercase tracking-[0.15em] text-zinc-500 border-b border-white/5">
+                <th className="text-left font-medium px-4 py-3">#</th>
+                <th className="text-left font-medium px-4 py-3">Player</th>
+                <th className="text-center font-medium px-4 py-3">Grp</th>
+                <th className="text-center font-medium px-4 py-3">P</th>
+                <th className="text-center font-medium px-4 py-3">W</th>
+                <th className="text-center font-medium px-4 py-3">L</th>
+                <th className="text-center font-medium px-4 py-3">F</th>
+                <th className="text-center font-medium px-4 py-3">A</th>
+                <th className="text-center font-medium px-4 py-3">Diff</th>
+                <th className="text-center font-medium px-4 py-3 text-red-500">Pts</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {top10.length === 0 && (
+                <tr><td colSpan={10} className="px-4 py-6 text-zinc-500">No players yet.</td></tr>
+              )}
+              {top10.map((p, i) => {
+                const diff = (p.frames_for ?? 0) - (p.frames_against ?? 0);
+                return (
+                  <tr key={p.id} className="hover:bg-white/[0.02]">
+                    <td className="px-4 py-3 text-zinc-600 tabular-nums">{String(i + 1).padStart(2, "0")}</td>
+                    <td className="px-4 py-3 font-medium">{p.name}</td>
+                    <td className="px-4 py-3 text-center text-zinc-400">{p.group}</td>
+                    <td className="px-4 py-3 text-center tabular-nums text-zinc-400">{p.played ?? 0}</td>
+                    <td className="px-4 py-3 text-center tabular-nums">{p.wins ?? 0}</td>
+                    <td className="px-4 py-3 text-center tabular-nums text-zinc-400">{p.losses ?? 0}</td>
+                    <td className="px-4 py-3 text-center tabular-nums text-zinc-400">{p.frames_for ?? 0}</td>
+                    <td className="px-4 py-3 text-center tabular-nums text-zinc-400">{p.frames_against ?? 0}</td>
+                    <td className="px-4 py-3 text-center tabular-nums text-zinc-400">{diff > 0 ? `+${diff}` : diff}</td>
+                    <td className="px-4 py-3 text-center tabular-nums font-semibold text-red-500">{p.points ?? 0}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </section>
     </div>
