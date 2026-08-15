@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import GroupTable from "@/components/GroupTable";
 import { Button } from "@/components/ui/button";
 import { Pencil, Check, Plus } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
 
 const sortPlayers = (a, b) =>
   (b.points ?? 0) - (a.points ?? 0) ||
@@ -10,6 +11,8 @@ const sortPlayers = (a, b) =>
   (b.frames_for ?? 0) - (a.frames_for ?? 0);
 
 export default function GroupStage() {
+  const { user } = useAuth();
+  const canEdit = user?.role === "admin";
   const [players, setPlayers] = useState([]);
   const [editing, setEditing] = useState(false);
   const [dirty, setDirty] = useState({});
@@ -56,15 +59,17 @@ export default function GroupStage() {
             Top 8 of each group (highlighted) advance to the playoffs · {players.length}/36 players
           </p>
         </div>
-        {editing ? (
-          <Button onClick={save} disabled={saving} className="bg-red-600 hover:bg-red-700 text-white rounded-full px-6">
-            <Check className="w-4 h-4 mr-2" />{saving ? "Saving…" : "Save changes"}
-          </Button>
-        ) : (
-          <Button onClick={() => setEditing(true)} variant="outline"
-            className="rounded-full px-6 border-white/10 bg-transparent hover:bg-white/5 text-zinc-200">
-            <Pencil className="w-4 h-4 mr-2" />Update results
-          </Button>
+        {canEdit && (
+          editing ? (
+            <Button onClick={save} disabled={saving} className="bg-red-600 hover:bg-red-700 text-white rounded-full px-6">
+              <Check className="w-4 h-4 mr-2" />{saving ? "Saving…" : "Save changes"}
+            </Button>
+          ) : (
+            <Button onClick={() => setEditing(true)} variant="outline"
+              className="rounded-full px-6 border-white/10 bg-transparent hover:bg-white/5 text-zinc-200">
+              <Pencil className="w-4 h-4 mr-2" />Update results
+            </Button>
+          )
         )}
       </div>
 

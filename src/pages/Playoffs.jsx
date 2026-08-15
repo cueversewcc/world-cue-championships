@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import BracketMatch from "@/components/BracketMatch";
 import { Button } from "@/components/ui/button";
 import { Pencil, Check, Trophy } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
 
 const rounds = [
   { key: "R16", label: "Round of 16" },
@@ -12,6 +13,8 @@ const rounds = [
 ];
 
 export default function Playoffs() {
+  const { user } = useAuth();
+  const canEdit = user?.role === "admin";
   const [matches, setMatches] = useState([]);
   const [editing, setEditing] = useState(false);
   const [dirty, setDirty] = useState({});
@@ -45,15 +48,17 @@ export default function Playoffs() {
           <h1 className="font-heading text-4xl sm:text-5xl tracking-tight">Playoffs</h1>
           <p className="text-sm text-zinc-500 mt-3">Single elimination · 16 players</p>
         </div>
-        {editing ? (
-          <Button onClick={save} disabled={saving} className="bg-red-600 hover:bg-red-700 text-white rounded-full px-6">
-            <Check className="w-4 h-4 mr-2" />{saving ? "Saving…" : "Save changes"}
-          </Button>
-        ) : (
-          <Button onClick={() => setEditing(true)} variant="outline"
-            className="rounded-full px-6 border-white/10 bg-transparent hover:bg-white/5 text-zinc-200">
-            <Pencil className="w-4 h-4 mr-2" />Update bracket
-          </Button>
+        {canEdit && (
+          editing ? (
+            <Button onClick={save} disabled={saving} className="bg-red-600 hover:bg-red-700 text-white rounded-full px-6">
+              <Check className="w-4 h-4 mr-2" />{saving ? "Saving…" : "Save changes"}
+            </Button>
+          ) : (
+            <Button onClick={() => setEditing(true)} variant="outline"
+              className="rounded-full px-6 border-white/10 bg-transparent hover:bg-white/5 text-zinc-200">
+              <Pencil className="w-4 h-4 mr-2" />Update bracket
+            </Button>
+          )
         )}
       </div>
 
