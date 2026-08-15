@@ -5,27 +5,18 @@
     "title": {
       "type": "string"
     },
-    "season": {
-      "type": "string",
-      "default": ""
-    },
-    "champion": {
-      "type": "string",
-      "default": ""
-    },
-    "runnerUp": {
-      "type": "string",
-      "default": ""
-    },
-    "rows": {
+    "results": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "name": {
+          "season": {
             "type": "string"
           },
-          "result": {
+          "champion": {
+            "type": "string"
+          },
+          "runnerUp": {
             "type": "string"
           }
         }
