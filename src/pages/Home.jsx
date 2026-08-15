@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Users, Trophy, ScrollText, Pencil, Check } from "lucide-react";
+import { ArrowRight, Users, Trophy, ScrollText, Pencil, Check, Plus, Trash2 } from "lucide-react";
 
 const sortPlayers = (a, b) =>
   (b.points ?? 0) - (a.points ?? 0) ||
@@ -16,6 +16,8 @@ export default function Home() {
   const [content, setContent] = useState(null);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(null);
+  const [allTime, setAllTime] = useState([]);
+  const [allTimeDraft, setAllTimeDraft] = useState([]);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -24,9 +26,17 @@ export default function Home() {
       setContent(list[0] || null);
       setDraft(list[0] || null);
     });
+    base44.entities.AllTimeLeader.list().then((list) => {
+      setAllTime(list);
+      setAllTimeDraft(list);
+    });
   }, []);
 
-  const startEdit = () => { setDraft(content ? { ...content } : { season: "", title_top: "", title_bottom: "", subtitle: "", stat_players: "", stat_playoffs: "", stat_groups: "" }); setEditing(true); };
+  const startEdit = () => {
+    setDraft(content ? { ...content } : { season: "", title_top: "", title_bottom: "", subtitle: "", stat_players: "", stat_playoffs: "", stat_groups: "" });
+    setAllTimeDraft(allTime.map((r) => ({ ...r })));
+    setEditing(true);
+  };
 
   const save = async () => {
     setSaving(true);
@@ -42,12 +52,31 @@ export default function Home() {
         const created = await base44.entities.HomeContent.create(payload);
         setContent(created);
       }
+
+      const draftIds = new Set(allTimeDraft.map((r) => r.id).filter(Boolean));
+      const toDelete = allTime.filter((r) => r.id && !draftIds.has(r.id)).map((r) => r.id);
+      const next = [];
+      for (const item of allTimeDraft) {
+        const data = { name: item.name, championships: Number(item.championships) || 0, finals: Number(item.finals) || 0, order: next.length };
+        if (item.id) {
+          next.push(await base44.entities.AllTimeLeader.update(item.id, data));
+        } else if (item.name) {
+          next.push(await base44.entities.AllTimeLeader.create(data));
+        }
+      }
+      if (toDelete.length) {
+        await Promise.all(toDelete.map((id) => base44.entities.AllTimeLeader.delete(id)));
+      }
+      setAllTime(next);
+      setAllTimeDraft(next);
+
       setEditing(false);
     } finally { setSaving(false); }
   };
 
   const leaders = [...players].sort(sortPlayers).slice(0, 5);
-  const top10 = [...players].sort(sortPlayers).slice(0, 10);
+  const byChamps = (a, b) => (b.championships ?? 0) - (a.championships ?? 0) || (b.finals ?? 0) - (a.finals ?? 0);
+  const atView = editing ? allTimeDraft : [...allTime].sort(byChamps).slice(0, 10);
   const c = editing ? draft : content;
   const field = (k) => ({
     value: (editing ? draft[k] : content?.[k]) || "",
@@ -166,9 +195,7 @@ export default function Home() {
       <section className="max-w-6xl mx-auto px-6 mt-20">
         <div className="flex items-baseline justify-between mb-6">
           <h2 className="font-heading text-2xl tracking-tight">Top 10 Overall</h2>
-          <Link to="/group-stage" className="text-[11px] uppercase tracking-[0.2em] text-red-600 hover:text-red-500">
-            Full tables
-          </Link>
+          <span className="text-[11px] uppercase tracking-[0.2em] text-zinc-600">All-time</span>
         </div>
         <div className="rounded-2xl border border-white/5 bg-white/[0.02] overflow-x-auto">
           <table className="w-full text-sm">
@@ -176,37 +203,54 @@ export default function Home() {
               <tr className="text-[10px] uppercase tracking-[0.15em] text-zinc-500 border-b border-white/5">
                 <th className="text-left font-medium px-4 py-3">#</th>
                 <th className="text-left font-medium px-4 py-3">Player</th>
-                <th className="text-center font-medium px-4 py-3">Grp</th>
-                <th className="text-center font-medium px-4 py-3">P</th>
-                <th className="text-center font-medium px-4 py-3">W</th>
-                <th className="text-center font-medium px-4 py-3">L</th>
-                <th className="text-center font-medium px-4 py-3">F</th>
-                <th className="text-center font-medium px-4 py-3">A</th>
-                <th className="text-center font-medium px-4 py-3">Diff</th>
-                <th className="text-center font-medium px-4 py-3 text-red-500">Pts</th>
+                <th className="text-center font-medium px-4 py-3">Championships</th>
+                <th className="text-center font-medium px-4 py-3">Finals</th>
+                {editing && <th className="px-4 py-3"></th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {top10.length === 0 && (
-                <tr><td colSpan={10} className="px-4 py-6 text-zinc-500">No players yet.</td></tr>
+              {atView.length === 0 && !editing && (
+                <tr><td colSpan={4} className="px-4 py-6 text-zinc-500">No all-time entries yet.</td></tr>
               )}
-              {top10.map((p, i) => {
-                const diff = (p.frames_for ?? 0) - (p.frames_against ?? 0);
-                return (
-                  <tr key={p.id} className="hover:bg-white/[0.02]">
-                    <td className="px-4 py-3 text-zinc-600 tabular-nums">{String(i + 1).padStart(2, "0")}</td>
-                    <td className="px-4 py-3 font-medium">{p.name}</td>
-                    <td className="px-4 py-3 text-center text-zinc-400">{p.group}</td>
-                    <td className="px-4 py-3 text-center tabular-nums text-zinc-400">{p.played ?? 0}</td>
-                    <td className="px-4 py-3 text-center tabular-nums">{p.wins ?? 0}</td>
-                    <td className="px-4 py-3 text-center tabular-nums text-zinc-400">{p.losses ?? 0}</td>
-                    <td className="px-4 py-3 text-center tabular-nums text-zinc-400">{p.frames_for ?? 0}</td>
-                    <td className="px-4 py-3 text-center tabular-nums text-zinc-400">{p.frames_against ?? 0}</td>
-                    <td className="px-4 py-3 text-center tabular-nums text-zinc-400">{diff > 0 ? `+${diff}` : diff}</td>
-                    <td className="px-4 py-3 text-center tabular-nums font-semibold text-red-500">{p.points ?? 0}</td>
-                  </tr>
-                );
-              })}
+              {atView.map((p, i) => (
+                <tr key={p.id || `new-${i}`} className="hover:bg-white/[0.02]">
+                  <td className="px-4 py-3 text-zinc-600 tabular-nums">{String(i + 1).padStart(2, "0")}</td>
+                  <td className="px-4 py-3 font-medium">
+                    {editing ? (
+                      <input value={p.name || ""} onChange={(e) => setAllTimeDraft((d) => d.map((r, idx) => idx === i ? { ...r, name: e.target.value } : r))}
+                        className="w-full bg-transparent border-b border-white/10 focus:border-red-600 outline-none" />
+                    ) : p.name}
+                  </td>
+                  <td className="px-4 py-3 text-center tabular-nums font-semibold text-red-500">
+                    {editing ? (
+                      <input type="number" value={p.championships ?? 0} onChange={(e) => setAllTimeDraft((d) => d.map((r, idx) => idx === i ? { ...r, championships: e.target.value } : r))}
+                        className="w-20 text-center bg-transparent border-b border-white/10 focus:border-red-600 outline-none" />
+                    ) : (p.championships ?? 0)}
+                  </td>
+                  <td className="px-4 py-3 text-center tabular-nums text-zinc-300">
+                    {editing ? (
+                      <input type="number" value={p.finals ?? 0} onChange={(e) => setAllTimeDraft((d) => d.map((r, idx) => idx === i ? { ...r, finals: e.target.value } : r))}
+                        className="w-20 text-center bg-transparent border-b border-white/10 focus:border-red-600 outline-none" />
+                    ) : (p.finals ?? 0)}
+                  </td>
+                  {editing && (
+                    <td className="px-4 py-3 text-center">
+                      <button onClick={() => setAllTimeDraft((d) => d.filter((_, idx) => idx !== i))}
+                        className="text-zinc-500 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                    </td>
+                  )}
+                </tr>
+              ))}
+              {editing && (
+                <tr>
+                  <td colSpan={4} className="px-4 py-3">
+                    <button onClick={() => setAllTimeDraft((d) => [...d, { name: "", championships: 0, finals: 0 }])}
+                      className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-red-600 hover:text-red-500">
+                      <Plus className="w-4 h-4" />Add player
+                    </button>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
