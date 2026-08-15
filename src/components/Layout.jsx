@@ -19,7 +19,7 @@ export default function Layout() {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group">
             <Target className="w-5 h-5 text-red-600 transition-transform duration-500 group-hover:rotate-90" />
-            <span className="text-[13px] tracking-[0.25em] uppercase font-semibold">World Cue</span>
+            <span className="text-[13px] tracking-[0.25em] uppercase font-semibold">WCC</span>
           </Link>
           <div className="flex items-center gap-3">
             <nav className="flex items-center gap-1 sm:gap-2">
