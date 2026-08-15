@@ -8,8 +8,8 @@ const nav = [
   { to: "/group-stage", label: "Group Stage" },
   { to: "/playoffs", label: "Playoffs" },
   { to: "/team-play", label: "Team Play" },
-  { to: "/predictions", label: "Predictions" },
   { to: "/7-second", label: "7 Second" },
+  { to: "/predictions", label: "Predictions" },
   { to: "/history", label: "History" },
   { to: "/rules", label: "Rules" },
 ];
