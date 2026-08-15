@@ -2,13 +2,10 @@
   "name": "Prediction",
   "type": "object",
   "properties": {
-    "category": {
+    "title": {
       "type": "string"
     },
-    "pick": {
-      "type": "string"
-    },
-    "notes": {
+    "content": {
       "type": "string",
       "default": ""
     },
@@ -18,7 +15,7 @@
     }
   },
   "required": [
-    "category"
+    "title"
   ],
   "rls": {
     "read": {},
