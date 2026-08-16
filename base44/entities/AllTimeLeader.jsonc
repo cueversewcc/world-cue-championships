@@ -13,6 +13,14 @@
       "type": "number",
       "default": 0
     },
+    "wins": {
+      "type": "number",
+      "default": 0
+    },
+    "losses": {
+      "type": "number",
+      "default": 0
+    },
     "order": {
       "type": "number",
       "default": 0

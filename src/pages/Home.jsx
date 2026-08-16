@@ -57,7 +57,7 @@ export default function Home() {
       const toDelete = allTime.filter((r) => r.id && !draftIds.has(r.id)).map((r) => r.id);
       const next = [];
       for (const item of allTimeDraft) {
-        const data = { name: item.name, championships: Number(item.championships) || 0, finals: Number(item.finals) || 0, order: next.length };
+        const data = { name: item.name, championships: Number(item.championships) || 0, finals: Number(item.finals) || 0, wins: Number(item.wins) || 0, losses: Number(item.losses) || 0, order: next.length };
         if (item.id) {
           next.push(await base44.entities.AllTimeLeader.update(item.id, data));
         } else if (item.name) {
@@ -84,6 +84,17 @@ export default function Home() {
     [arr[i], arr[j]] = [arr[j], arr[i]];
     return arr;
   });
+
+  // Current-season W/L by player name, to add on top of stored historical totals
+  const currentByName = players.reduce((acc, p) => {
+    if (p.name) acc[p.name.trim().toLowerCase()] = p;
+    return acc;
+  }, {});
+  const liveStats = (name) => {
+    const cp = currentByName[(name || "").trim().toLowerCase()];
+    if (!cp) return { w: 0, l: 0 };
+    return { w: cp.wins ?? 0, l: cp.losses ?? 0 };
+  };
   const c = editing ? draft : content;
   const field = (k) => ({
     value: (editing ? draft[k] : content?.[k]) || "",
@@ -212,12 +223,14 @@ export default function Home() {
                 <th className="text-left font-medium px-4 py-3">Player</th>
                 <th className="text-center font-medium px-4 py-3">Championships</th>
                 <th className="text-center font-medium px-4 py-3">Finals</th>
+                <th className="text-center font-medium px-4 py-3">W</th>
+                <th className="text-center font-medium px-4 py-3">L</th>
                 {editing && <th className="px-4 py-3"></th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {atView.length === 0 && !editing && (
-                <tr><td colSpan={4} className="px-4 py-6 text-zinc-500">No all-time entries yet.</td></tr>
+                <tr><td colSpan={6} className="px-4 py-6 text-zinc-500">No all-time entries yet.</td></tr>
               )}
               {atView.map((p, i) => (
                 <tr key={p.id || `new-${i}`} className="hover:bg-white/[0.02]">
@@ -240,6 +253,18 @@ export default function Home() {
                         className="w-20 text-center bg-transparent border-b border-white/10 focus:border-red-600 outline-none" />
                     ) : (p.finals ?? 0)}
                   </td>
+                  <td className="px-4 py-3 text-center tabular-nums font-semibold">
+                    {editing ? (
+                      <input type="number" value={p.wins ?? 0} onChange={(e) => setAllTimeDraft((d) => d.map((r, idx) => idx === i ? { ...r, wins: e.target.value } : r))}
+                        className="w-16 text-center bg-transparent border-b border-white/10 focus:border-red-600 outline-none" />
+                    ) : (Number(p.wins) || 0) + liveStats(p.name).w}
+                  </td>
+                  <td className="px-4 py-3 text-center tabular-nums text-zinc-300">
+                    {editing ? (
+                      <input type="number" value={p.losses ?? 0} onChange={(e) => setAllTimeDraft((d) => d.map((r, idx) => idx === i ? { ...r, losses: e.target.value } : r))}
+                        className="w-16 text-center bg-transparent border-b border-white/10 focus:border-red-600 outline-none" />
+                    ) : (Number(p.losses) || 0) + liveStats(p.name).l}
+                  </td>
                   {editing && (
                     <td className="px-4 py-3 text-center">
                       <div className="flex items-center justify-center gap-1">
@@ -256,8 +281,8 @@ export default function Home() {
               ))}
               {editing && (
                 <tr>
-                  <td colSpan={4} className="px-4 py-3">
-                    <button onClick={() => setAllTimeDraft((d) => [...d, { name: "", championships: 0, finals: 0 }])}
+                  <td colSpan={6} className="px-4 py-3">
+                    <button onClick={() => setAllTimeDraft((d) => [...d, { name: "", championships: 0, finals: 0, wins: 0, losses: 0 }])}
                       className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-red-600 hover:text-red-500">
                       <Plus className="w-4 h-4" />Add player
                     </button>
