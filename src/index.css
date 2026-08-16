@@ -89,4 +89,25 @@
   body {
     @apply bg-background text-foreground font-body;
   }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #dc2626 #000000;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #000000;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #dc2626;
+    border: 2px solid #000000;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #ef4444;
+  }
 }
