@@ -22,8 +22,13 @@ export default function GroupStage() {
   useEffect(() => { load(); }, []);
 
   const handleChange = (id, field, value) => {
-    setPlayers((prev) => prev.map((p) => (p.id === id ? { ...p, [field]: value } : p)));
-    setDirty((d) => ({ ...d, [id]: { ...(d[id] || {}), [field]: value } }));
+    setPlayers((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, [field]: value, ...(field === "wins" ? { points: value * 3 } : {}) } : p))
+    );
+    setDirty((d) => ({
+      ...d,
+      [id]: { ...(d[id] || {}), [field]: value, ...(field === "wins" ? { points: value * 3 } : {}) },
+    }));
   };
 
   const save = async () => {

@@ -36,7 +36,7 @@ export default function GroupTable({ title, players, editing, onChange, onDelete
                 </td>
                 {keys.map((k) => (
                   <td key={k} className="py-2.5 px-2 text-center tabular-nums">
-                    {editing ? (
+                    {editing && k !== "points" ? (
                       <input
                         type="number"
                         value={p[k] ?? 0}
@@ -44,7 +44,9 @@ export default function GroupTable({ title, players, editing, onChange, onDelete
                         className="w-12 bg-transparent border-b border-white/10 focus:border-red-600 outline-none text-center py-1"
                       />
                     ) : (
-                      <span className={k === "points" ? "text-red-500 font-semibold" : "text-zinc-400"}>{p[k] ?? 0}</span>
+                      <span className={k === "points" ? "text-red-500 font-semibold" : "text-zinc-400"}>
+                        {k === "points" ? (p.wins ?? 0) * 3 : (p[k] ?? 0)}
+                      </span>
                     )}
                   </td>
                 ))}

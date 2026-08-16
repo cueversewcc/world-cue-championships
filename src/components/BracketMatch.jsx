@@ -28,16 +28,10 @@ export default function BracketMatch({ match, editing, onChange }) {
         onName={(v) => onChange(match.id, "player1", v)} onScore={(v) => onChange(match.id, "score1", v)} />
       <Side name={match.player2} score={match.score2} isWinner={w2} editing={editing}
         onName={(v) => onChange(match.id, "player2", v)} onScore={(v) => onChange(match.id, "score2", v)} />
-      {editing && (
-        <div className="px-3 py-2 flex items-center gap-2">
+      {match.winner && (
+        <div className="px-3 py-2 flex items-center gap-1.5">
           <span className="text-[9px] uppercase tracking-[0.15em] text-zinc-500">Winner</span>
-          <select value={match.winner || ""} onChange={(e) => onChange(match.id, "winner", e.target.value)}
-            className="flex-1 bg-transparent text-xs text-zinc-300 outline-none">
-            <option value="" className="bg-zinc-900">—</option>
-            {[match.player1, match.player2].filter(Boolean).map((n) => (
-              <option key={n} value={n} className="bg-zinc-900">{n}</option>
-            ))}
-          </select>
+          <span className="text-xs font-medium text-red-500 truncate">{match.winner}</span>
         </div>
       )}
     </div>

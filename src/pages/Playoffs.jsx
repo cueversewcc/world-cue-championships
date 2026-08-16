@@ -23,9 +23,48 @@ export default function Playoffs() {
   const load = async () => setMatches(await base44.entities.PlayoffMatch.list("slot"));
   useEffect(() => { load(); }, []);
 
+  const advanceMap = { R16: "QF", QF: "SF", SF: "F" };
+
+  const applyChange = (list, id, field, value) => {
+    const dirty = new Set([id]);
+    let next = list.map((m) => (m.id === id ? { ...m, [field]: value } : m));
+    const m = next.find((x) => x.id === id);
+    const s1 = Number(m.score1) || 0;
+    const s2 = Number(m.score2) || 0;
+    let winner = "";
+    if (s1 > s2 && m.player1) winner = m.player1;
+    else if (s2 > s1 && m.player2) winner = m.player2;
+    next = next.map((x) => (x.id === id ? { ...x, winner } : x));
+    const tr = advanceMap[m.round];
+    if (tr) {
+      const ts = Math.ceil(m.slot / 2);
+      const pos = m.slot % 2 === 1 ? "player1" : "player2";
+      const target = next.find((x) => x.round === tr && x.slot === ts);
+      if (target && target[pos] !== winner) {
+        next = next.map((x) =>
+          x.id === target.id ? { ...x, [pos]: winner, winner: "", score1: 0, score2: 0 } : x
+        );
+        dirty.add(target.id);
+      }
+    }
+    return { next, dirtyIds: [...dirty] };
+  };
+
   const handleChange = (id, field, value) => {
-    setMatches((prev) => prev.map((m) => (m.id === id ? { ...m, [field]: value } : m)));
-    setDirty((d) => ({ ...d, [id]: { ...(d[id] || {}), [field]: value } }));
+    const { next, dirtyIds } = applyChange(matches, id, field, value);
+    setMatches(next);
+    setDirty((d) => {
+      const copy = { ...d };
+      for (const did of dirtyIds) {
+        const m = next.find((x) => x.id === did);
+        copy[did] = {
+          ...(copy[did] || {}),
+          player1: m.player1, player2: m.player2,
+          score1: m.score1, score2: m.score2, winner: m.winner,
+        };
+      }
+      return copy;
+    });
   };
 
   const save = async () => {
