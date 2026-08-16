@@ -21,6 +21,10 @@
       "type": "number",
       "default": 0
     },
+    "ties": {
+      "type": "number",
+      "default": 0
+    },
     "order": {
       "type": "number",
       "default": 0
