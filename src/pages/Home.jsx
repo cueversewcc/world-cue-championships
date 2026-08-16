@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Users, Trophy, ScrollText, Pencil, Check, Plus, Trash2 } from "lucide-react";
+import { ArrowRight, Users, Trophy, ScrollText, Pencil, Check, Plus, Trash2, ChevronUp, ChevronDown } from "lucide-react";
 
 const sortPlayers = (a, b) =>
   (b.points ?? 0) - (a.points ?? 0) ||
@@ -26,7 +26,7 @@ export default function Home() {
       setContent(list[0] || null);
       setDraft(list[0] || null);
     });
-    base44.entities.AllTimeLeader.list().then((list) => {
+    base44.entities.AllTimeLeader.list("order").then((list) => {
       setAllTime(list);
       setAllTimeDraft(list);
     });
@@ -75,8 +75,15 @@ export default function Home() {
   };
 
   const leaders = [...players].sort(sortPlayers).slice(0, 5);
-  const byChamps = (a, b) => (b.championships ?? 0) - (a.championships ?? 0) || (b.finals ?? 0) - (a.finals ?? 0);
-  const atView = editing ? allTimeDraft : [...allTime].sort(byChamps).slice(0, 10);
+  const atView = editing ? allTimeDraft : allTime;
+
+  const moveLeader = (i, dir) => setAllTimeDraft((d) => {
+    const j = i + dir;
+    if (j < 0 || j >= d.length) return d;
+    const arr = [...d];
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+    return arr;
+  });
   const c = editing ? draft : content;
   const field = (k) => ({
     value: (editing ? draft[k] : content?.[k]) || "",
@@ -235,8 +242,14 @@ export default function Home() {
                   </td>
                   {editing && (
                     <td className="px-4 py-3 text-center">
-                      <button onClick={() => setAllTimeDraft((d) => d.filter((_, idx) => idx !== i))}
-                        className="text-zinc-500 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                      <div className="flex items-center justify-center gap-1">
+                        <button onClick={() => moveLeader(i, -1)} disabled={i === 0}
+                          className="text-zinc-500 hover:text-red-500 disabled:opacity-20"><ChevronUp className="w-4 h-4" /></button>
+                        <button onClick={() => moveLeader(i, 1)} disabled={i === allTimeDraft.length - 1}
+                          className="text-zinc-500 hover:text-red-500 disabled:opacity-20"><ChevronDown className="w-4 h-4" /></button>
+                        <button onClick={() => setAllTimeDraft((d) => d.filter((_, idx) => idx !== i))}
+                          className="text-zinc-500 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                      </div>
                     </td>
                   )}
                 </tr>
