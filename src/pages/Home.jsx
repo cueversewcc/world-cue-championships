@@ -57,7 +57,7 @@ export default function Home() {
       const toDelete = allTime.filter((r) => r.id && !draftIds.has(r.id)).map((r) => r.id);
       const next = [];
       for (const item of allTimeDraft) {
-        const data = { name: item.name, championships: Number(item.championships) || 0, finals: Number(item.finals) || 0, semis: Number(item.semis) || 0, wins: Number(item.wins) || 0, losses: Number(item.losses) || 0, ties: Number(item.ties) || 0, order: next.length };
+        const data = { name: item.name, championships: Number(item.championships) || 0, finals: Number(item.finals) || 0, semis: Number(item.semis) || 0, qf: Number(item.qf) || 0, wins: Number(item.wins) || 0, losses: Number(item.losses) || 0, ties: Number(item.ties) || 0, order: next.length };
         if (item.id) {
           next.push(await base44.entities.AllTimeLeader.update(item.id, data));
         } else if (item.name) {
@@ -224,6 +224,7 @@ export default function Home() {
                 <th className="text-center font-medium px-4 py-3">Championships</th>
                 <th className="text-center font-medium px-4 py-3">Finals</th>
                 <th className="text-center font-medium px-4 py-3">SF</th>
+                <th className="text-center font-medium px-4 py-3">QF</th>
                 <th className="text-center font-medium px-4 py-3">W</th>
                 <th className="text-center font-medium px-4 py-3">L</th>
                 <th className="text-center font-medium px-4 py-3">T</th>
@@ -232,7 +233,7 @@ export default function Home() {
             </thead>
             <tbody className="divide-y divide-white/5">
               {atView.length === 0 && !editing && (
-                <tr><td colSpan={8} className="px-4 py-6 text-zinc-500">No all-time entries yet.</td></tr>
+                <tr><td colSpan={9} className="px-4 py-6 text-zinc-500">No all-time entries yet.</td></tr>
               )}
               {atView.map((p, i) => (
                 <tr key={p.id || `new-${i}`} className="hover:bg-white/[0.02]">
@@ -260,6 +261,12 @@ export default function Home() {
                       <input type="number" value={p.semis ?? 0} onChange={(e) => setAllTimeDraft((d) => d.map((r, idx) => idx === i ? { ...r, semis: e.target.value } : r))}
                         className="w-16 text-center bg-transparent border-b border-white/10 focus:border-red-600 outline-none" />
                     ) : (p.semis ?? 0)}
+                  </td>
+                  <td className="px-4 py-3 text-center tabular-nums text-zinc-300">
+                    {editing ? (
+                      <input type="number" value={p.qf ?? 0} onChange={(e) => setAllTimeDraft((d) => d.map((r, idx) => idx === i ? { ...r, qf: e.target.value } : r))}
+                        className="w-16 text-center bg-transparent border-b border-white/10 focus:border-red-600 outline-none" />
+                    ) : (p.qf ?? 0)}
                   </td>
                   <td className="px-4 py-3 text-center tabular-nums font-semibold">
                     {editing ? (
@@ -295,8 +302,8 @@ export default function Home() {
               ))}
               {editing && (
                 <tr>
-                  <td colSpan={8} className="px-4 py-3">
-                    <button onClick={() => setAllTimeDraft((d) => [...d, { name: "", championships: 0, finals: 0, semis: 0, wins: 0, losses: 0, ties: 0 }])}
+                  <td colSpan={9} className="px-4 py-3">
+                    <button onClick={() => setAllTimeDraft((d) => [...d, { name: "", championships: 0, finals: 0, semis: 0, qf: 0, wins: 0, losses: 0, ties: 0 }])}
                       className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-red-600 hover:text-red-500">
                       <Plus className="w-4 h-4" />Add player
                     </button>
