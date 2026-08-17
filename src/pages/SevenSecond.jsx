@@ -139,45 +139,50 @@ export default function SevenSecond() {
                 <h3 className="font-heading text-lg tracking-tight">Group {g + 1}</h3>
                 <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-600">4 players</span>
               </div>
-              <div className="grid grid-cols-5 gap-2">
-                {group.map((val, i) => {
-                  const isName = i < 5;
-                  return (
-                    <div key={i} className="flex flex-col gap-1">
-                      {isName && (
-                        <span className="text-[9px] uppercase tracking-[0.15em] text-zinc-600">P{i + 1}</span>
-                      )}
-                      {editing ? (
-                        isName ? (
-                          <textarea
-                            value={val}
-                            onChange={(e) => updateBox(g, i, e.target.value)}
-                            rows={2}
-                            placeholder="Name"
-                            className="w-full min-h-[56px] resize-none bg-transparent border border-white/10 rounded-md p-2 text-xs text-zinc-100 focus:border-red-600 outline-none"
-                          />
-                        ) : (
-                          <input
-                            type="text"
-                            inputMode="numeric"
-                            value={val}
-                            onChange={(e) => updateBox(g, i, e.target.value)}
-                            placeholder="0"
-                            className="w-full h-8 text-center bg-transparent border border-white/10 rounded-md px-1 text-sm text-zinc-100 focus:border-red-600 outline-none"
-                          />
-                        )
-                      ) : isName ? (
-                        <div className="w-full min-h-[56px] border border-white/5 rounded-md p-2 text-xs text-zinc-200 break-words">
-                          {val || <span className="text-zinc-700">—</span>}
-                        </div>
+              <div className="grid grid-cols-6 gap-2">
+                {Array.from({ length: 5 }).map((_, r) => (
+                  <React.Fragment key={r}>
+                    {editing ? (
+                      <input
+                        type="text"
+                        value={group[r] || ""}
+                        onChange={(e) => updateBox(g, r, e.target.value)}
+                        placeholder={`P${r + 1}`}
+                        className="w-full h-8 bg-transparent border border-white/10 rounded-md px-2 text-xs text-zinc-100 focus:border-red-600 outline-none truncate"
+                      />
+                    ) : (
+                      <div className="w-full h-8 leading-8 truncate px-2 text-xs text-zinc-200 border border-white/5 rounded-md">
+                        {group[r] || <span className="text-zinc-700">—</span>}
+                      </div>
+                    )}
+                    {Array.from({ length: 5 }).map((_, c) => {
+                      if (c === r) {
+                        return (
+                          <div key={`x-${r}-${c}`} className="w-full h-8 flex items-center justify-center border border-white/5 rounded-md text-zinc-600 text-sm">
+                            ✕
+                          </div>
+                        );
+                      }
+                      const sIdx = 5 + r * 4 + (c < r ? c : c - 1);
+                      const val = group[sIdx] || "";
+                      return editing ? (
+                        <input
+                          key={`s-${r}-${c}`}
+                          type="text"
+                          inputMode="numeric"
+                          value={val}
+                          onChange={(e) => updateBox(g, sIdx, e.target.value)}
+                          placeholder="0"
+                          className="w-full h-8 text-center bg-transparent border border-white/10 rounded-md px-1 text-sm text-zinc-100 focus:border-red-600 outline-none"
+                        />
                       ) : (
-                        <div className="w-full h-8 text-center leading-8 border border-white/5 rounded-md px-1 text-sm text-zinc-200 truncate">
+                        <div key={`s-${r}-${c}`} className="w-full h-8 text-center leading-8 border border-white/5 rounded-md px-1 text-sm text-zinc-200 truncate">
                           {val || <span className="text-zinc-700">·</span>}
                         </div>
-                      )}
-                    </div>
-                  );
-                })}
+                      );
+                    })}
+                  </React.Fragment>
+                ))}
               </div>
             </div>
           ))}
