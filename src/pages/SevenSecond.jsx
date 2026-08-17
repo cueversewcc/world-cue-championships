@@ -139,19 +139,19 @@ export default function SevenSecond() {
                 <h3 className="font-heading text-lg tracking-tight">Group {g + 1}</h3>
                 <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-600">4 players</span>
               </div>
-              <div className="grid grid-cols-6 gap-2">
+              <div className="grid grid-cols-[2.5fr_1fr_1fr_1fr_1fr_1fr] gap-2">
                 {Array.from({ length: 5 }).map((_, r) => (
                   <React.Fragment key={r}>
                     {editing ? (
-                      <input
-                        type="text"
+                      <textarea
                         value={group[r] || ""}
                         onChange={(e) => updateBox(g, r, e.target.value)}
                         placeholder={`P${r + 1}`}
-                        className="w-full h-8 bg-transparent border border-white/10 rounded-md px-2 text-xs text-zinc-100 focus:border-red-600 outline-none truncate"
+                        rows={2}
+                        className="w-full min-h-[44px] resize-none bg-transparent border border-white/10 rounded-md px-2 py-1 text-xs text-zinc-100 focus:border-red-600 outline-none break-words"
                       />
                     ) : (
-                      <div className="w-full h-8 leading-8 truncate px-2 text-xs text-zinc-200 border border-white/5 rounded-md">
+                      <div className="w-full min-h-[44px] px-2 py-1 text-xs text-zinc-200 border border-white/5 rounded-md break-words flex items-center">
                         {group[r] || <span className="text-zinc-700">—</span>}
                       </div>
                     )}
