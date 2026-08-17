@@ -84,9 +84,9 @@ export default function Home() {
     (Number(p.semis) || 0) * PTS.semis +
     (Number(p.qf) || 0) * PTS.qf;
 
-  const atView = editing
-    ? [...allTimeDraft].sort((a, b) => computePoints(b) - computePoints(a))
-    : allTime;
+  const atView = [...(editing ? allTimeDraft : allTime)].sort(
+    (a, b) => computePoints(b) - computePoints(a)
+  );
 
   const updateField = (key, field, value) =>
     setAllTimeDraft((d) => d.map((r) => (r._key === key ? { ...r, [field]: value } : r)));
