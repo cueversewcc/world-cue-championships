@@ -84,9 +84,11 @@ export default function Home() {
     (Number(p.semis) || 0) * PTS.semis +
     (Number(p.qf) || 0) * PTS.qf;
 
-  const atView = [...(editing ? allTimeDraft : allTime)]
-    .sort((a, b) => computePoints(b) - computePoints(a))
-    .slice(...(editing ? [] : [0, 10]));
+  const sortedAll = [...(editing ? allTimeDraft : allTime)].sort(
+    (a, b) => computePoints(b) - computePoints(a)
+  );
+  // Public only ever sees the top 10; admins editing see all entries.
+  const atView = editing ? sortedAll : sortedAll.slice(0, 10);
 
   const updateField = (key, field, value) =>
     setAllTimeDraft((d) => d.map((r) => (r._key === key ? { ...r, [field]: value } : r)));
