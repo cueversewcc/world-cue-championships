@@ -4,6 +4,22 @@ import { useAuth } from "@/lib/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Pencil, Check } from "lucide-react";
 
+const GROUPS = 9;
+const BOXES_PER_GROUP = 28;
+
+const emptyBoxes = () =>
+  Array.from({ length: GROUPS }, () =>
+    Array.from({ length: BOXES_PER_GROUP }, () => "")
+  );
+
+const normBoxes = (b) => {
+  const src = Array.isArray(b) ? b : [];
+  return Array.from({ length: GROUPS }, (_, g) => {
+    const row = Array.isArray(src[g]) ? src[g] : [];
+    return Array.from({ length: BOXES_PER_GROUP }, (_, i) => row[i] || "");
+  });
+};
+
 export default function SevenSecond() {
   const { user } = useAuth();
   const canEdit = user?.role === "admin";
@@ -20,18 +36,35 @@ export default function SevenSecond() {
   }, []);
 
   const startEdit = () => {
-    setDraft(content ? { ...content } : { season: "", title_top: "7 Second", title_bottom: "Shootout", subtitle: "" });
+    setDraft(
+      content
+        ? { ...content, boxes: normBoxes(content.boxes) }
+        : { season: "", title_top: "30 Second", title_bottom: "Shootout", subtitle: "", boxes: emptyBoxes() }
+    );
     setEditing(true);
   };
 
   const save = async () => {
     setSaving(true);
     try {
-      const payload = { season: draft.season, title_top: draft.title_top, title_bottom: draft.title_bottom, subtitle: draft.subtitle };
-      if (content?.id) { const updated = await base44.entities.SevenSecondContent.update(content.id, payload); setContent(updated); }
-      else { const created = await base44.entities.SevenSecondContent.create(payload); setContent(created); }
+      const payload = {
+        season: draft.season,
+        title_top: draft.title_top,
+        title_bottom: draft.title_bottom,
+        subtitle: draft.subtitle,
+        boxes: normBoxes(draft.boxes),
+      };
+      if (content?.id) {
+        const updated = await base44.entities.SevenSecondContent.update(content.id, payload);
+        setContent(updated);
+      } else {
+        const created = await base44.entities.SevenSecondContent.create(payload);
+        setContent(created);
+      }
       setEditing(false);
-    } finally { setSaving(false); }
+    } finally {
+      setSaving(false);
+    }
   };
 
   const c = editing ? draft : content;
@@ -40,11 +73,19 @@ export default function SevenSecond() {
     onChange: (e) => setDraft((d) => ({ ...d, [k]: e.target.value })),
   });
 
+  const boxes = editing ? normBoxes(draft?.boxes) : normBoxes(content?.boxes);
+  const updateBox = (g, i, value) =>
+    setDraft((d) => {
+      const next = normBoxes(d.boxes);
+      next[g][i] = value;
+      return { ...d, boxes: next };
+    });
+
   return (
     <div>
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(220,38,38,0.18),transparent_60%)]" />
-        <div className="relative max-w-6xl mx-auto px-6 pt-24 pb-28 text-center">
+        <div className="relative max-w-6xl mx-auto px-6 pt-24 pb-20 text-center">
           {canEdit && (
             <div className="absolute top-6 right-6">
               {editing ? (
@@ -75,7 +116,7 @@ export default function SevenSecond() {
                   className="block mx-auto w-full max-w-2xl bg-transparent text-center text-red-600 border-b border-white/10 focus:border-red-600 outline-none mt-2" />
               </span>
             ) : (
-              <>{c?.title_top || "7 Second"}<br /><span className="text-red-600">{c?.title_bottom || "Shootout"}</span></>
+              <>{c?.title_top || "30 Second"}<br /><span className="text-red-600">{c?.title_bottom || "Shootout"}</span></>
             )}
           </h1>
 
@@ -84,16 +125,42 @@ export default function SevenSecond() {
               className="block mx-auto mt-8 max-w-xl w-full bg-transparent text-center text-sm text-zinc-400 border border-white/10 rounded-lg p-3 focus:border-red-600 outline-none resize-none" />
           ) : (
             <p className="max-w-xl mx-auto mt-8 text-sm sm:text-base text-zinc-400 leading-relaxed">
-              {c?.subtitle || "A fast-paced knockout format. Bracket to be announced."}
+              {c?.subtitle || "9 groups of 4 players · 28 name slots per group"}
             </p>
           )}
         </div>
       </section>
 
-      <section className="max-w-6xl mx-auto px-6">
-        <div className="rounded-2xl border border-dashed border-white/10 py-20 text-center">
-          <p className="text-[11px] uppercase tracking-[0.3em] text-zinc-600">Bracket</p>
-          <p className="mt-3 text-sm text-zinc-600">Coming soon</p>
+      <section className="max-w-6xl mx-auto px-6 pb-20">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {boxes.map((group, g) => (
+            <div key={g} className="rounded-2xl border border-white/5 bg-white/[0.02] p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-heading text-lg tracking-tight">Group {g + 1}</h3>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-600">4 players</span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {group.map((val, i) => (
+                  <div key={i} className="flex flex-col gap-1">
+                    <span className="text-[9px] uppercase tracking-[0.15em] text-zinc-600">{i + 1}</span>
+                    {editing ? (
+                      <textarea
+                        value={val}
+                        onChange={(e) => updateBox(g, i, e.target.value)}
+                        rows={2}
+                        placeholder="Name"
+                        className="w-full min-h-[56px] resize-none bg-transparent border border-white/10 rounded-md p-2 text-xs text-zinc-100 focus:border-red-600 outline-none"
+                      />
+                    ) : (
+                      <div className="w-full min-h-[56px] border border-white/5 rounded-md p-2 text-xs text-zinc-200 break-words">
+                        {val || <span className="text-zinc-700">—</span>}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     </div>

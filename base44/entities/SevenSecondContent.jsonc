@@ -13,6 +13,16 @@
     },
     "subtitle": {
       "type": "string"
+    },
+    "boxes": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "default": []
     }
   },
   "required": [
