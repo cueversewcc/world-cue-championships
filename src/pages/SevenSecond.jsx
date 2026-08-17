@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Check } from "lucide-react";
 
 const GROUPS = 9;
-const BOXES_PER_GROUP = 28;
+const BOXES_PER_GROUP = 25;
 
 const emptyBoxes = () =>
   Array.from({ length: GROUPS }, () =>
@@ -125,7 +125,7 @@ export default function SevenSecond() {
               className="block mx-auto mt-8 max-w-xl w-full bg-transparent text-center text-sm text-zinc-400 border border-white/10 rounded-lg p-3 focus:border-red-600 outline-none resize-none" />
           ) : (
             <p className="max-w-xl mx-auto mt-8 text-sm sm:text-base text-zinc-400 leading-relaxed">
-              {c?.subtitle || "9 groups of 4 players · 28 name slots per group"}
+              {c?.subtitle || "9 groups of 4 players · 25 name slots per group"}
             </p>
           )}
         </div>
@@ -139,7 +139,7 @@ export default function SevenSecond() {
                 <h3 className="font-heading text-lg tracking-tight">Group {g + 1}</h3>
                 <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-600">4 players</span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-5 gap-2">
                 {group.map((val, i) => (
                   <div key={i} className="flex flex-col gap-1">
                     <span className="text-[9px] uppercase tracking-[0.15em] text-zinc-600">{i + 1}</span>
