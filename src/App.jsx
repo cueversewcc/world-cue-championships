@@ -15,6 +15,7 @@ import Predictions from './pages/Predictions';
 import History from './pages/History';
 import SevenSecond from './pages/SevenSecond';
 import Rules from './pages/Rules';
+import PlayerRegister from './pages/PlayerRegister';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
@@ -53,6 +54,7 @@ const AuthenticatedApp = () => {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/join" element={<PlayerRegister />} />
         <Route path="/group-stage" element={<GroupStage />} />
         <Route path="/playoffs" element={<Playoffs />} />
         <Route path="/team-play" element={<TeamPlay />} />

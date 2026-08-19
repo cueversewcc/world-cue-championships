@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/AuthContext";
 
 const nav = [
   { to: "/", label: "Home" },
+  { to: "/join", label: "Register" },
   { to: "/group-stage", label: "Group Stage" },
   { to: "/playoffs", label: "Playoffs" },
   { to: "/team-play", label: "Team Play" },
