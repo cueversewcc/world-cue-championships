@@ -17,7 +17,7 @@ export default function Events() {
   const canEdit = user?.role === "admin";
   const [tournaments, setTournaments] = useState([]);
   const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({ name: "", format: "single_elim", consolationName: "Consolation Cup", advancingCount: 16, groupCount: 2 });
+  const [form, setForm] = useState({ name: "", format: "single_elim", mainBracketName: "Championship", consolationName: "Consolation Cup", advancingCount: 16, groupCount: 2 });
   const [saving, setSaving] = useState(false);
 
   const load = async () => setTournaments(await base44.entities.Tournament.list("-order"));
@@ -33,12 +33,13 @@ export default function Events() {
       await base44.entities.Tournament.create({
         name: form.name.trim(),
         format: form.format,
+        mainBracketName: form.mainBracketName,
         consolationName: form.consolationName,
         advancingCount: Number(form.advancingCount) || 16,
         groupCount: Number(form.groupCount) || 2,
         order: tournaments.length,
       });
-      setForm({ name: "", format: "single_elim", consolationName: "Consolation Cup", advancingCount: 16, groupCount: 2 });
+      setForm({ name: "", format: "single_elim", mainBracketName: "Championship", consolationName: "Consolation Cup", advancingCount: 16, groupCount: 2 });
       setAdding(false);
       load();
     } finally {
@@ -93,11 +94,19 @@ export default function Events() {
             </div>
           </div>
           {form.format === "group_stage" && (
-            <div className="grid sm:grid-cols-3 gap-4 mt-4">
+            <div className="grid sm:grid-cols-2 gap-4 mt-4">
+              <div>
+                <label className="block text-[10px] uppercase tracking-[0.2em] text-zinc-500 mb-2">Main bracket name</label>
+                <input value={form.mainBracketName} onChange={(e) => setForm({ ...form, mainBracketName: e.target.value })} className="w-full h-10 bg-transparent border border-white/10 rounded-lg px-3 text-sm focus:border-red-600 outline-none" />
+              </div>
               <div>
                 <label className="block text-[10px] uppercase tracking-[0.2em] text-zinc-500 mb-2">Consolation name</label>
                 <input value={form.consolationName} onChange={(e) => setForm({ ...form, consolationName: e.target.value })} className="w-full h-10 bg-transparent border border-white/10 rounded-lg px-3 text-sm focus:border-red-600 outline-none" />
               </div>
+            </div>
+          )}
+          {form.format === "group_stage" && (
+            <div className="grid sm:grid-cols-2 gap-4 mt-4">
               <div>
                 <label className="block text-[10px] uppercase tracking-[0.2em] text-zinc-500 mb-2">Advancing count</label>
                 <input type="number" min="2" value={form.advancingCount} onChange={(e) => setForm({ ...form, advancingCount: e.target.value })} className="w-full h-10 bg-transparent border border-white/10 rounded-lg px-3 text-sm focus:border-red-600 outline-none" />
@@ -139,7 +148,7 @@ export default function Events() {
             <h3 className="font-heading text-xl tracking-tight mb-2">{t.name}</h3>
             <p className="text-xs text-zinc-500">Status: {t.status}</p>
             {t.format === "group_stage" && (
-              <p className="text-xs text-zinc-600 mt-1">Top {t.advancingCount} advance · {t.consolationName}</p>
+              <p className="text-xs text-zinc-600 mt-1">Top {t.advancingCount} advance to {t.mainBracketName || "Championship"} · {t.consolationName}</p>
             )}
           </Link>
         ))}

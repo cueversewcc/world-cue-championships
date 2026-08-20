@@ -175,20 +175,6 @@ export default function GroupStage() {
         </form>
       )}
 
-      <div className="grid lg:grid-cols-2 gap-8">
-        {[{ t: "Group A", g: "A", list: groupA }, { t: "Group B", g: "B", list: groupB }].map((x) => (
-          <div key={x.g} className="space-y-3">
-            <GroupTable title={x.t} players={x.list} editing={editing} onChange={handleChange} onDelete={remove} />
-            {editing && x.list.length < 18 && (
-              <button onClick={() => addPlayer(x.g)}
-                className="w-full py-3 rounded-xl border border-dashed border-white/10 text-xs uppercase tracking-[0.15em] text-zinc-500 hover:text-red-500 hover:border-red-600/40 transition-colors flex items-center justify-center gap-2">
-                <Plus className="w-4 h-4" />Add player to {x.t}
-              </button>
-            )}
-          </div>
-        ))}
-      </div>
-
       {canEdit && groupMatches.length > 0 && (
         <section className="mt-12">
           <h2 className="font-heading text-2xl tracking-tight mb-6">Logged Group Matches</h2>

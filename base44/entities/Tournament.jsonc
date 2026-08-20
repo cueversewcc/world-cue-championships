@@ -14,6 +14,10 @@
       ],
       "default": "single_elim"
     },
+    "mainBracketName": {
+      "type": "string",
+      "default": "Championship"
+    },
     "consolationName": {
       "type": "string",
       "default": "Consolation Cup"

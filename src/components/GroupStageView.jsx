@@ -187,7 +187,7 @@ export default function GroupStageView({ tournament, players, matches, editable,
           <div>
             <p className="text-sm font-medium">Advance to brackets</p>
             <p className="text-xs text-zinc-500 mt-1">
-              Top {tournament.advancingCount || 16} qualify for the main bracket; the rest enter the {tournament.consolationName || "Consolation Cup"}.
+              Top {tournament.advancingCount || 16} qualify for the {tournament.mainBracketName || "Championship"}; the rest enter the {tournament.consolationName || "Consolation Cup"}.
             </p>
           </div>
           <Button onClick={advance} disabled={advancing} className="bg-red-600 hover:bg-red-700 text-white rounded-full px-6">
@@ -199,7 +199,7 @@ export default function GroupStageView({ tournament, players, matches, editable,
 
       {hasBrackets && (
         <div className="space-y-10">
-          {mainMatches.length > 0 && <TournamentBracket matches={mainMatches} editable={editable} onSaved={onChanged} title="Main Bracket" />}
+          {mainMatches.length > 0 && <TournamentBracket matches={mainMatches} editable={editable} onSaved={onChanged} title={tournament.mainBracketName || "Championship"} />}
           {consMatches.length > 0 && <TournamentBracket matches={consMatches} editable={editable} onSaved={onChanged} title={tournament.consolationName || "Consolation Cup"} />}
         </div>
       )}

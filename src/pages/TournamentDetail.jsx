@@ -167,7 +167,7 @@ export default function TournamentDetail() {
               {players.length < 2 && <p className="text-xs text-zinc-600 mt-3">At least 2 players required.</p>}
             </div>
           ) : tournament.format === "single_elim" ? (
-            <TournamentBracket matches={mainMatches} editable={canEdit} onSaved={load} title="Bracket" />
+            <TournamentBracket matches={mainMatches} editable={canEdit} onSaved={load} title={tournament.mainBracketName || "Championship"} />
           ) : (
             <DoubleElimView wb={wbMatches} lb={lbMatches} final={finalMatches} editable={canEdit} onSaved={load} />
           )}
