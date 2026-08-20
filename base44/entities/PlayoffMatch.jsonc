@@ -2,14 +2,16 @@
   "name": "PlayoffMatch",
   "type": "object",
   "properties": {
-    "round": {
+    "bracket": {
       "type": "string",
       "enum": [
-        "R16",
-        "QF",
-        "SF",
-        "F"
-      ]
+        "main",
+        "consolation"
+      ],
+      "default": "main"
+    },
+    "round": {
+      "type": "string"
     },
     "slot": {
       "type": "number"

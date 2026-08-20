@@ -1,0 +1,39 @@
+{
+  "name": "PlayoffConfig",
+  "type": "object",
+  "properties": {
+    "mainBracketName": {
+      "type": "string",
+      "default": "Championship"
+    },
+    "consolationName": {
+      "type": "string",
+      "default": "Consolation Cup"
+    },
+    "hasConsolation": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "mainBracketName"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

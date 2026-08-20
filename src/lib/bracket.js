@@ -127,6 +127,36 @@ export const crossSeed = (groupLists) => {
   return result;
 };
 
+// ---- Playoff bracket builder (for the Playoffs tab) ----
+// Maps numeric round index to a string label based on bracket size.
+export const playoffRoundLabel = (round, totalRounds) => {
+  const remaining = Math.pow(2, totalRounds - round);
+  if (remaining >= 16) return `R${remaining}`;
+  if (remaining === 8) return "QF";
+  if (remaining === 4) return "SF";
+  if (remaining === 2) return "F";
+  return `R${remaining}`;
+};
+
+// Build PlayoffMatch records (with string round labels, 1-indexed slots) from a player list.
+export const buildPlayoffBracket = (players, bracket) => {
+  const list = (players || []).filter((p) => p && String(p).trim());
+  if (list.length < 2) return [];
+  const n = nextPow2(list.length);
+  const totalRounds = Math.log2(n);
+  const matches = buildSingleElim(list);
+  return matches.map((m) => ({
+    round: playoffRoundLabel(m.round, totalRounds),
+    slot: m.slot + 1,
+    player1: m.player1,
+    player2: m.player2,
+    score1: m.score1,
+    score2: m.score2,
+    winner: m.winner,
+    bracket,
+  }));
+};
+
 // ---- Double elimination ----
 export const buildWinners = (players) => buildSingleElim(players);
 
