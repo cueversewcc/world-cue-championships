@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Trophy, ScrollText, Pencil, Check, Plus, Trash2 } from "lucide-react";
 import { computeElo } from "@/lib/elo";
+import { loadAllMatches } from "@/lib/matches";
 
 const sortPlayers = (a, b) =>
   (b.points ?? 0) - (a.points ?? 0) ||
@@ -32,7 +33,7 @@ export default function Home() {
       setAllTime(list);
       setAllTimeDraft(list);
     });
-    base44.entities.Match.list().then(setMatches);
+    loadAllMatches().then(setMatches);
   }, []);
 
   const startEdit = () => {

@@ -1,4 +1,4 @@
-export const ELO_START = 1000;
+export const ELO_START = 1500;
 export const ELO_K = 32;
 
 // Replays the match log in chronological order and returns a { name: rating } map.
