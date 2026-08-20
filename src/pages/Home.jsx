@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Trophy, ScrollText, Pencil, Check, Plus, Trash2 } from "lucide-react";
+import { computeElo } from "@/lib/elo";
 
 const sortPlayers = (a, b) =>
   (b.points ?? 0) - (a.points ?? 0) ||
@@ -19,6 +20,7 @@ export default function Home() {
   const [allTime, setAllTime] = useState([]);
   const [allTimeDraft, setAllTimeDraft] = useState([]);
   const [saving, setSaving] = useState(false);
+  const [matches, setMatches] = useState([]);
 
   useEffect(() => {
     base44.entities.Player.list().then(setPlayers);
@@ -30,6 +32,7 @@ export default function Home() {
       setAllTime(list);
       setAllTimeDraft(list);
     });
+    base44.entities.Match.list().then(setMatches);
   }, []);
 
   const startEdit = () => {
@@ -76,6 +79,12 @@ export default function Home() {
   };
 
   const leaders = [...players].sort(sortPlayers).slice(0, 5);
+
+  const eloRatings = useMemo(() => computeElo(matches), [matches]);
+  const eloTop = Object.entries(eloRatings)
+    .map(([name, rating]) => ({ name, rating: Math.round(rating) }))
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 5);
 
   const PTS = { championships: 100, finals: 50, semis: 25, qf: 10 };
   const computePoints = (p) =>
@@ -213,6 +222,27 @@ export default function Home() {
               <span className="flex-1 text-sm">{p.name}</span>
               <span className="text-[10px] uppercase tracking-[0.15em] text-zinc-500">Group {p.group}</span>
               <span className="text-sm text-red-500 font-semibold tabular-nums w-10 text-right">{p.points ?? 0}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-6 mt-20">
+        <div className="flex items-baseline justify-between mb-6">
+          <h2 className="font-heading text-2xl tracking-tight">Elo Ratings</h2>
+          <Link to="/ratings" className="text-[11px] uppercase tracking-[0.2em] text-red-600 hover:text-red-500">
+            Full leaderboard
+          </Link>
+        </div>
+        <div className="rounded-2xl border border-white/5 bg-white/[0.02] divide-y divide-white/5">
+          {eloTop.length === 0 && (
+            <p className="p-6 text-sm text-zinc-500">No matches logged yet — record matches on the Ratings page.</p>
+          )}
+          {eloTop.map((p, i) => (
+            <div key={p.name} className="flex items-center gap-4 px-6 py-4">
+              <span className="text-xs tabular-nums text-zinc-600 w-5">{String(i + 1).padStart(2, "0")}</span>
+              <span className="flex-1 text-sm">{p.name}</span>
+              <span className="text-sm text-red-500 font-semibold tabular-nums w-16 text-right">{p.rating}</span>
             </div>
           ))}
         </div>

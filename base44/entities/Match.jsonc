@@ -1,0 +1,58 @@
+{
+  "name": "Match",
+  "type": "object",
+  "properties": {
+    "player1": {
+      "type": "string"
+    },
+    "player2": {
+      "type": "string"
+    },
+    "score1": {
+      "type": "number",
+      "default": 0
+    },
+    "score2": {
+      "type": "number",
+      "default": 0
+    },
+    "winner": {
+      "type": "string",
+      "default": ""
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "group",
+        "playoff"
+      ],
+      "default": "group"
+    },
+    "group": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "player1",
+    "player2"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

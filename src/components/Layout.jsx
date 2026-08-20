@@ -8,6 +8,7 @@ const nav = [
   { to: "/join", label: "Register" },
   { to: "/group-stage", label: "Group Stage" },
   { to: "/playoffs", label: "Playoffs" },
+  { to: "/ratings", label: "Ratings" },
   { to: "/team-play", label: "Team Play" },
   { to: "/7-second", label: "30 Second" },
   { to: "/predictions", label: "Predictions" },
