@@ -5,11 +5,10 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
 
-const FORMAT_LABEL = { single_elim: "Single Elimination", double_elim: "Double Elimination", group_stage: "Group Stage" };
+const FORMAT_LABEL = { single_elim: "Single Elimination", double_elim: "Double Elimination" };
 const FORMAT_BADGE = {
   single_elim: "bg-red-600/15 text-red-400",
   double_elim: "bg-amber-500/15 text-amber-400",
-  group_stage: "bg-sky-500/15 text-sky-400",
 };
 
 export default function Events() {
@@ -93,34 +92,9 @@ export default function Events() {
               <select value={form.format} onChange={(e) => setForm({ ...form, format: e.target.value })} className="w-full h-10 bg-[#0a0a0b] border border-white/10 rounded-lg px-3 text-sm focus:border-red-600 outline-none">
                 <option value="single_elim">Single Elimination</option>
                 <option value="double_elim">Double Elimination</option>
-                <option value="group_stage">Group Stage</option>
               </select>
             </div>
           </div>
-          {form.format === "group_stage" && (
-            <div className="grid sm:grid-cols-2 gap-4 mt-4">
-              <div>
-                <label className="block text-[10px] uppercase tracking-[0.2em] text-zinc-500 mb-2">Main bracket name</label>
-                <input value={form.mainBracketName} onChange={(e) => setForm({ ...form, mainBracketName: e.target.value })} className="w-full h-10 bg-transparent border border-white/10 rounded-lg px-3 text-sm focus:border-red-600 outline-none" />
-              </div>
-              <div>
-                <label className="block text-[10px] uppercase tracking-[0.2em] text-zinc-500 mb-2">Consolation name</label>
-                <input value={form.consolationName} onChange={(e) => setForm({ ...form, consolationName: e.target.value })} className="w-full h-10 bg-transparent border border-white/10 rounded-lg px-3 text-sm focus:border-red-600 outline-none" />
-              </div>
-            </div>
-          )}
-          {form.format === "group_stage" && (
-            <div className="grid sm:grid-cols-2 gap-4 mt-4">
-              <div>
-                <label className="block text-[10px] uppercase tracking-[0.2em] text-zinc-500 mb-2">Advancing count</label>
-                <input type="number" min="2" value={form.advancingCount} onChange={(e) => setForm({ ...form, advancingCount: e.target.value })} className="w-full h-10 bg-transparent border border-white/10 rounded-lg px-3 text-sm focus:border-red-600 outline-none" />
-              </div>
-              <div>
-                <label className="block text-[10px] uppercase tracking-[0.2em] text-zinc-500 mb-2">Groups</label>
-                <input type="number" min="1" max="12" value={form.groupCount} onChange={(e) => setForm({ ...form, groupCount: e.target.value })} className="w-full h-10 bg-transparent border border-white/10 rounded-lg px-3 text-sm focus:border-red-600 outline-none" />
-              </div>
-            </div>
-          )}
           <div className="flex justify-end mt-5">
             <Button type="submit" disabled={saving || !form.name.trim()} className="bg-red-600 hover:bg-red-700 text-white rounded-full px-6">
               {saving ? "Creating…" : "Create tournament"}
@@ -151,9 +125,6 @@ export default function Events() {
             </div>
             <h3 className="font-heading text-xl tracking-tight mb-2">{t.name}</h3>
             <p className="text-xs text-zinc-500">Status: {t.status}</p>
-            {t.format === "group_stage" && (
-              <p className="text-xs text-zinc-600 mt-1">Top {t.advancingCount} advance to {t.mainBracketName || "Championship"} · {t.consolationName}</p>
-            )}
           </Link>
         ))}
       </div>
