@@ -89,43 +89,6 @@ export default function GroupStageView({ tournament, players, matches, editable,
 
   return (
     <div className="space-y-10">
-      <div className="grid lg:grid-cols-2 gap-6">
-        {groups.map((g, gi) => (
-          <div key={g} className="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
-            <h3 className="font-heading text-lg tracking-tight mb-4">Group {g}</h3>
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-[10px] uppercase tracking-[0.15em] text-zinc-500 border-b border-white/5">
-                  <th className="text-left px-2 py-2">#</th>
-                  <th className="text-left px-2 py-2">Player</th>
-                  <th className="text-center px-2 py-2">P</th>
-                  <th className="text-center px-2 py-2">W</th>
-                  <th className="text-center px-2 py-2">L</th>
-                  <th className="text-center px-2 py-2">Pts</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {standingsByGroup[gi].length === 0 && (
-                  <tr>
-                    <td colSpan={6} className="px-2 py-4 text-zinc-600">No players</td>
-                  </tr>
-                )}
-                {standingsByGroup[gi].map((s, i) => (
-                  <tr key={s.name} className={qualifiedSet.has(s.name) ? "text-zinc-100" : "text-zinc-500"}>
-                    <td className="px-2 py-2 text-zinc-600 tabular-nums">{i + 1}</td>
-                    <td className="px-2 py-2">{s.name}</td>
-                    <td className="px-2 py-2 text-center tabular-nums">{s.played}</td>
-                    <td className="px-2 py-2 text-center tabular-nums">{s.wins}</td>
-                    <td className="px-2 py-2 text-center tabular-nums">{s.losses}</td>
-                    <td className="px-2 py-2 text-center tabular-nums font-semibold text-red-500">{s.points}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ))}
-      </div>
-
       {editable && (
         <form onSubmit={submit} className="rounded-2xl border border-red-600/20 bg-red-600/[0.04] p-5">
           <h3 className="font-heading text-lg tracking-tight mb-4">Log Group Match</h3>
