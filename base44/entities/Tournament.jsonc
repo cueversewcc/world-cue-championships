@@ -1,0 +1,65 @@
+{
+  "name": "Tournament",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "format": {
+      "type": "string",
+      "enum": [
+        "single_elim",
+        "double_elim",
+        "group_stage"
+      ],
+      "default": "single_elim"
+    },
+    "consolationName": {
+      "type": "string",
+      "default": "Consolation Cup"
+    },
+    "advancingCount": {
+      "type": "number",
+      "default": 16
+    },
+    "groupCount": {
+      "type": "number",
+      "default": 2
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "setup",
+        "active",
+        "complete"
+      ],
+      "default": "setup"
+    },
+    "order": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "name",
+    "format"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

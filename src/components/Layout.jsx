@@ -10,7 +10,7 @@ const nav = [
   { to: "/playoffs", label: "Playoffs" },
   { to: "/ratings", label: "Ratings" },
   { to: "/team-play", label: "Team Play" },
-  { to: "/7-second", label: "30 Second" },
+  { to: "/events", label: "Events" },
   { to: "/predictions", label: "Predictions" },
   { to: "/history", label: "History" },
   { to: "/rules", label: "Rules" },

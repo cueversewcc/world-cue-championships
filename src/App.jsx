@@ -13,7 +13,8 @@ import Playoffs from './pages/Playoffs';
 import TeamPlay from './pages/TeamPlay';
 import Predictions from './pages/Predictions';
 import History from './pages/History';
-import SevenSecond from './pages/SevenSecond';
+import Events from './pages/Events';
+import TournamentDetail from './pages/TournamentDetail';
 import Rules from './pages/Rules';
 import PlayerRegister from './pages/PlayerRegister';
 import Ratings from './pages/Ratings';
@@ -61,7 +62,8 @@ const AuthenticatedApp = () => {
         <Route path="/ratings" element={<Ratings />} />
         <Route path="/team-play" element={<TeamPlay />} />
         <Route path="/predictions" element={<Predictions />} />
-        <Route path="/7-second" element={<SevenSecond />} />
+        <Route path="/events" element={<Events />} />
+        <Route path="/events/:id" element={<TournamentDetail />} />
         <Route path="/history" element={<History />} />
         <Route path="/rules" element={<Rules />} />
       </Route>

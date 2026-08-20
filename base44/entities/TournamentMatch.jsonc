@@ -1,0 +1,75 @@
+{
+  "name": "TournamentMatch",
+  "type": "object",
+  "properties": {
+    "tournamentId": {
+      "type": "string"
+    },
+    "bracket": {
+      "type": "string",
+      "enum": [
+        "main",
+        "consolation",
+        "winners",
+        "losers",
+        "final",
+        "group"
+      ],
+      "default": "main"
+    },
+    "round": {
+      "type": "number",
+      "default": 0
+    },
+    "slot": {
+      "type": "number",
+      "default": 0
+    },
+    "group": {
+      "type": "string",
+      "default": ""
+    },
+    "player1": {
+      "type": "string",
+      "default": ""
+    },
+    "player2": {
+      "type": "string",
+      "default": ""
+    },
+    "score1": {
+      "type": "number",
+      "default": 0
+    },
+    "score2": {
+      "type": "number",
+      "default": 0
+    },
+    "winner": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "tournamentId",
+    "bracket"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
