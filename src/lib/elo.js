@@ -16,6 +16,9 @@ export function computeElo(matches) {
 
     const ra = get(a);
     const rb = get(b);
+    // Wider rating gaps produce bigger swings: K scales up with the distance
+    // between the two players, on top of the standard expected-score effect.
+    const k = ELO_K * (1 + Math.abs(ra - rb) / 400);
     const ea = 1 / (1 + Math.pow(10, (rb - ra) / 400));
     const eb = 1 - ea;
 
@@ -29,8 +32,8 @@ export function computeElo(matches) {
       sa = 0.5; sb = 0.5;
     }
 
-    ratings[a] = ra + ELO_K * (sa - ea);
-    ratings[b] = rb + ELO_K * (sb - eb);
+    ratings[a] = ra + k * (sa - ea);
+    ratings[b] = rb + k * (sb - eb);
   }
 
   return ratings;

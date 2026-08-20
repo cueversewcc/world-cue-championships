@@ -52,7 +52,7 @@ export default function Ratings() {
         <p className="text-[11px] uppercase tracking-[0.3em] text-red-600 mb-3">Rankings</p>
         <h1 className="font-heading text-4xl sm:text-5xl tracking-tight">Elo Ratings</h1>
         <p className="text-sm text-zinc-500 mt-3">
-          {leaderboard.length} rated players · start 1500 · K-factor 32 · group & playoff results update automatically
+          {leaderboard.length} rated players · start 1500 · K-factor 32 (scaled by rating gap) · group & playoff results update automatically
         </p>
       </div>
 
