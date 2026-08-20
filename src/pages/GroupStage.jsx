@@ -92,7 +92,7 @@ export default function GroupStage() {
       <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
         <div>
           <p className="text-[11px] uppercase tracking-[0.3em] text-red-600 mb-3">Stage One</p>
-          <h1 className="font-heading text-4xl sm:text-5xl tracking-tight">Groups</h1>
+          <h1 className="font-heading text-4xl sm:text-5xl tracking-tight">Group Stage</h1>
           <p className="text-sm text-zinc-500 mt-3">
             Top 8 of each group (highlighted) advance to the playoffs · {players.length}/36 players
           </p>
