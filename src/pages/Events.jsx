@@ -20,7 +20,10 @@ export default function Events() {
   const [form, setForm] = useState({ name: "", format: "single_elim", mainBracketName: "Championship", consolationName: "Consolation Cup", advancingCount: 16, groupCount: 2 });
   const [saving, setSaving] = useState(false);
 
-  const load = async () => setTournaments(await base44.entities.Tournament.list("-order"));
+  const load = async () => {
+    const all = await base44.entities.Tournament.list("-order");
+    setTournaments(all.filter((t) => t.category !== "groups"));
+  };
   useEffect(() => {
     load();
   }, []);
@@ -33,6 +36,7 @@ export default function Events() {
       await base44.entities.Tournament.create({
         name: form.name.trim(),
         format: form.format,
+        category: "events",
         mainBracketName: form.mainBracketName,
         consolationName: form.consolationName,
         advancingCount: Number(form.advancingCount) || 16,

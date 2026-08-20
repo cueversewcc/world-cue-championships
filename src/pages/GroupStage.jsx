@@ -15,7 +15,7 @@ export default function GroupStage() {
   const [saving, setSaving] = useState(false);
 
   const load = async () => {
-    const list = await base44.entities.Tournament.filter({ format: "group_stage" }, "-order");
+    const list = await base44.entities.Tournament.filter({ category: "groups" }, "-order");
     setTournaments(list);
   };
   useEffect(() => { load(); }, []);
@@ -28,6 +28,7 @@ export default function GroupStage() {
       await base44.entities.Tournament.create({
         name: form.name.trim(),
         format: "group_stage",
+        category: "groups",
         mainBracketName: form.mainBracketName,
         consolationName: form.consolationName,
         groupCount: Number(form.groupCount) || 2,

@@ -5,6 +5,14 @@
     "name": {
       "type": "string"
     },
+    "category": {
+      "type": "string",
+      "enum": [
+        "events",
+        "groups"
+      ],
+      "default": "events"
+    },
     "format": {
       "type": "string",
       "enum": [
