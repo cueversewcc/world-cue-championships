@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, ArrowUp, ArrowDown, ArrowLeft, Zap } from "lucide-react";
+import { Plus, Trash2, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Zap } from "lucide-react";
 import { buildSingleElim, buildWinners, buildLosersBracket, nextPow2 } from "@/lib/bracket";
 import TournamentBracket from "@/components/TournamentBracket";
 import DoubleElimView from "@/components/DoubleElimView";
@@ -93,6 +93,11 @@ export default function TournamentDetail() {
     }
   };
 
+  const advanceToGroupStage = async () => {
+    await base44.entities.Tournament.update(id, { status: "active" });
+    load();
+  };
+
   const groups = Array.from({ length: tournament.groupCount || 2 }, (_, i) => String.fromCharCode(65 + i));
   const mainMatches = matches.filter((m) => m.bracket === "main");
   const wbMatches = matches.filter((m) => m.bracket === "winners");
@@ -153,7 +158,19 @@ export default function TournamentDetail() {
       </section>
 
       {tournament.format === "group_stage" ? (
-        <GroupStageView tournament={tournament} players={players} matches={matches} editable={canEdit} onChanged={load} />
+        tournament.status === "setup" ? (
+          <div className="rounded-2xl border border-dashed border-white/10 p-10 text-center">
+            <p className="text-sm text-zinc-400 mb-4">Assign players to their groups above, then advance to the group stage to start logging matches.</p>
+            {canEdit && (
+              <Button onClick={advanceToGroupStage} disabled={players.length < 2} className="bg-red-600 hover:bg-red-700 text-white rounded-full px-6">
+                <ArrowRight className="w-4 h-4 mr-2" />Advance to Group Stage
+              </Button>
+            )}
+            {players.length < 2 && <p className="text-xs text-zinc-600 mt-3">At least 2 players required.</p>}
+          </div>
+        ) : (
+          <GroupStageView tournament={tournament} players={players} matches={matches} editable={canEdit} onChanged={load} />
+        )
       ) : (
         <section>
           {!hasBracket ? (

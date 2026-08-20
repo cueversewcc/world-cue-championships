@@ -48,6 +48,14 @@
     "winner": {
       "type": "string",
       "default": ""
+    },
+    "points1": {
+      "type": "number",
+      "default": 0
+    },
+    "points2": {
+      "type": "number",
+      "default": 0
     }
   },
   "required": [

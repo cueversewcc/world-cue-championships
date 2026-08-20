@@ -105,8 +105,12 @@ export const groupStandings = (players, matches) => {
     sa.framesAgainst += Number(m.score2) || 0;
     sb.framesFor += Number(m.score2) || 0;
     sb.framesAgainst += Number(m.score1) || 0;
-    if (m.winner === a) { sa.wins++; sb.losses++; sa.points += 3; }
-    else if (m.winner === b) { sb.wins++; sa.losses++; sb.points += 3; }
+    const p1 = m.points1 != null ? Number(m.points1) : (m.winner === a ? 3 : 0);
+    const p2 = m.points2 != null ? Number(m.points2) : (m.winner === b ? 3 : 0);
+    sa.points += p1;
+    sb.points += p2;
+    if (m.winner === a) { sa.wins++; sb.losses++; }
+    else if (m.winner === b) { sb.wins++; sa.losses++; }
   }
   return Object.values(stats).sort(
     (a, b) => b.points - a.points || (b.framesFor - b.framesAgainst) - (a.framesFor - a.framesAgainst) || b.wins - a.wins
