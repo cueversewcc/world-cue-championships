@@ -58,11 +58,6 @@ export default function GroupStage() {
   return (
     <div className="max-w-6xl mx-auto px-6 py-16">
       <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
-        <div>
-          <p className="text-[11px] uppercase tracking-[0.3em] text-red-600 mb-3">Stage One</p>
-          <h1 className="font-heading text-4xl sm:text-5xl tracking-tight">Group Stage</h1>
-          <p className="text-sm text-zinc-500 mt-3">Create group stages, log matches, and advance to the playoffs.</p>
-        </div>
         {canEdit && !adding && (
           <Button onClick={() => setAdding(true)} className="bg-red-600 hover:bg-red-700 text-white rounded-full px-6">
             <Plus className="w-4 h-4 mr-2" />Add group stage
