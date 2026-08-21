@@ -108,9 +108,7 @@ export default function GroupStage() {
       )}
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {tournaments.length === 0 && !adding && (
-          <p className="text-sm text-zinc-500 col-span-full">No group stages yet. Click "Add group stage" to create one.</p>
-        )}
+
         {tournaments.map((t) => (
           <div key={t.id} onClick={() => setSelected(t.id)} className="group rounded-2xl border border-white/5 bg-white/[0.02] p-6 hover:border-red-600/30 transition-colors cursor-pointer">
             <div className="flex items-start justify-between mb-4">
