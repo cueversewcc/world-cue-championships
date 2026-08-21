@@ -3,8 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { UserPlus, RefreshCw, ExternalLink } from "lucide-react";
 
-// TODO: replace with the user's Google Form URL
-const REGISTER_FORM_URL = "";
+const REGISTER_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScyYsUZ-Smc-uwj8_qlhJ7JhCL5Hu9RGuTH23fdLp8VD1l5jg/viewform?usp=send_form";
 
 export default function Roster() {
   const [players, setPlayers] = useState([]);
