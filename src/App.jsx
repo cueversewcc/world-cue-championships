@@ -58,7 +58,7 @@ const AuthenticatedApp = () => {
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/join" element={<PlayerRegister />} />
-        <Route path="/roster" element={<Roster />} />
+        <Route path="/registrations" element={<Roster />} />
         <Route path="/group-stage" element={<GroupStage />} />
         <Route path="/playoffs" element={<Playoffs />} />
         <Route path="/ratings" element={<Ratings />} />
