@@ -10,8 +10,17 @@ export default function Ratings() {
   const canEdit = user?.role === "admin";
   const [matches, setMatches] = useState([]);
 
-  const load = async () => setMatches(await loadAllMatches());
-  useEffect(() => { load(); }, []);
+  const load = async () => {
+    console.log("📥 Ratings: loading matches...");
+    const data = await loadAllMatches();
+    console.log("✅ Ratings: loadAllMatches returned:", data);
+    console.log("✅ Ratings: matches count:", data?.length);
+    setMatches(data);
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
 
   const ratings = useMemo(() => computeElo(matches), [matches]);
 
@@ -27,9 +36,15 @@ export default function Ratings() {
       if (!a || !b || a === b) continue;
       const sa = ensure(a);
       const sb = ensure(b);
-      sa.played++; sb.played++;
-      if (m.winner === a) { sa.wins++; sb.losses++; }
-      else if (m.winner === b) { sb.wins++; sa.losses++; }
+      sa.played++;
+      sb.played++;
+      if (m.winner === a) {
+        sa.wins++;
+        sb.losses++;
+      } else if (m.winner === b) {
+        sb.wins++;
+        sa.losses++;
+      }
     }
     return Object.values(stats)
       .map((s) => ({ ...s, rating: Math.round(ratings[s.name] ?? 1500) }))
@@ -43,22 +58,7 @@ export default function Ratings() {
 
   const remove = async (m) => {
     if (m._source === "log") await base44.entities.Match.delete(m.id);
-    else if (m._source === "tournament") await base44.entities.TournamentMatch.delete(m.id);
     load();
-  };
-
-  const sourceLabel = (m) => {
-    if (m._source === "playoff") return "Playoff";
-    if (m._source === "tournament") {
-      const b = m.bracket || "";
-      if (b === "group") return `Group ${m.group || ""}`;
-      if (b === "consolation") return "Consolation";
-      if (b === "winners") return "Winners";
-      if (b === "losers") return "Losers";
-      if (b === "final") return "Final";
-      return "Bracket";
-    }
-    return `Group ${m.group || ""}`;
   };
 
   return (
@@ -85,13 +85,21 @@ export default function Ratings() {
           </thead>
           <tbody className="divide-y divide-white/5">
             {leaderboard.length === 0 && (
-              <tr><td colSpan={6} className="px-4 py-8 text-center text-zinc-500">No matches logged yet.</td></tr>
+              <tr>
+                <td colSpan={6} className="px-4 py-8 text-center text-zinc-500">
+                  No matches logged yet.
+                </td>
+              </tr>
             )}
             {leaderboard.map((p, i) => (
               <tr key={p.name} className="hover:bg-white/[0.02]">
-                <td className="px-4 py-3 text-zinc-600 tabular-nums">{String(i + 1).padStart(2, "0")}</td>
+                <td className="px-4 py-3 text-zinc-600 tabular-nums">
+                  {String(i + 1).padStart(2, "0")}
+                </td>
                 <td className="px-4 py-3 font-medium">{p.name}</td>
-                <td className="px-4 py-3 text-center tabular-nums font-semibold text-red-500">{p.rating}</td>
+                <td className="px-4 py-3 text-center tabular-nums font-semibold text-red-500">
+                  {p.rating}
+                </td>
                 <td className="px-4 py-3 text-center tabular-nums text-zinc-300">{p.played}</td>
                 <td className="px-4 py-3 text-center tabular-nums text-zinc-300">{p.wins}</td>
                 <td className="px-4 py-3 text-center tabular-nums text-zinc-300">{p.losses}</td>
@@ -108,14 +116,20 @@ export default function Ratings() {
             {sortedLog.map((m) => (
               <div key={`${m._source}-${m.id}`} className="flex items-center gap-4 px-5 py-3">
                 <span className="text-[10px] uppercase tracking-[0.15em] text-zinc-600 w-20">
-                  {sourceLabel(m)}
+                  {m._source === "playoff" ? "Playoff" : `Group ${m.group || ""}`}
                 </span>
                 <span className="flex-1 text-sm">
-                  <span className={m.winner === m.player1 ? "text-zinc-100 font-medium" : "text-zinc-400"}>{m.player1}</span>
-                  <span className="text-zinc-600 mx-2">{m.score1}–{m.score2}</span>
-                  <span className={m.winner === m.player2 ? "text-zinc-100 font-medium" : "text-zinc-400"}>{m.player2}</span>
+                  <span className={m.winner === m.player1 ? "text-zinc-100 font-medium" : "text-zinc-400"}>
+                    {m.player1}
+                  </span>
+                  <span className="text-zinc-600 mx-2">
+                    {m.score1}–{m.score2}
+                  </span>
+                  <span className={m.winner === m.player2 ? "text-zinc-100 font-medium" : "text-zinc-400"}>
+                    {m.player2}
+                  </span>
                 </span>
-                {canEdit && (m._source === "log" || m._source === "tournament") && (
+                {canEdit && m._source === "log" && (
                   <button onClick={() => remove(m)} className="text-zinc-600 hover:text-red-500">
                     <Trash2 className="w-4 h-4" />
                   </button>
