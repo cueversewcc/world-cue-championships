@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { computeElo } from "@/lib/elo";
 import { loadAllMatches } from "@/lib/matches";
 import { Trash2 } from "lucide-react";
+console.log("🧪 loadAllMatches import:", loadAllMatches);
 
 export default function Ratings() {
   const { user } = useAuth();
