@@ -43,7 +43,22 @@ export default function Ratings() {
 
   const remove = async (m) => {
     if (m._source === "log") await base44.entities.Match.delete(m.id);
+    else if (m._source === "tournament") await base44.entities.TournamentMatch.delete(m.id);
     load();
+  };
+
+  const sourceLabel = (m) => {
+    if (m._source === "playoff") return "Playoff";
+    if (m._source === "tournament") {
+      const b = m.bracket || "";
+      if (b === "group") return `Group ${m.group || ""}`;
+      if (b === "consolation") return "Consolation";
+      if (b === "winners") return "Winners";
+      if (b === "losers") return "Losers";
+      if (b === "final") return "Final";
+      return "Bracket";
+    }
+    return `Group ${m.group || ""}`;
   };
 
   return (
@@ -93,14 +108,14 @@ export default function Ratings() {
             {sortedLog.map((m) => (
               <div key={`${m._source}-${m.id}`} className="flex items-center gap-4 px-5 py-3">
                 <span className="text-[10px] uppercase tracking-[0.15em] text-zinc-600 w-20">
-                  {m._source === "playoff" ? "Playoff" : `Group ${m.group || ""}`}
+                  {sourceLabel(m)}
                 </span>
                 <span className="flex-1 text-sm">
                   <span className={m.winner === m.player1 ? "text-zinc-100 font-medium" : "text-zinc-400"}>{m.player1}</span>
                   <span className="text-zinc-600 mx-2">{m.score1}–{m.score2}</span>
                   <span className={m.winner === m.player2 ? "text-zinc-100 font-medium" : "text-zinc-400"}>{m.player2}</span>
                 </span>
-                {canEdit && m._source === "log" && (
+                {canEdit && (m._source === "log" || m._source === "tournament") && (
                   <button onClick={() => remove(m)} className="text-zinc-600 hover:text-red-500">
                     <Trash2 className="w-4 h-4" />
                   </button>
