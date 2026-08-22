@@ -6,6 +6,13 @@ import { loadAllMatches } from "@/lib/matches";
 import { Trash2 } from "lucide-react";
 console.log("🧩 loadAllMatches import value:", loadAllMatches);
 
+useEffect(() => {
+  console.log("🎬 Ratings useEffect running");
+  loadAllMatches()
+    .then((res) => console.log("✅ loadAllMatches direct call result:", res?.length, res?.[0]))
+    .catch((e) => console.error("❌ loadAllMatches threw:", e));
+}, []);
+
 export default function Ratings() {
   const { user } = useAuth();
   const canEdit = user?.role === "admin";
