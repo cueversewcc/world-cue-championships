@@ -58,6 +58,7 @@ export default function TournamentBracket({ matches, editable, onSaved, title })
           winner: m.winner,
         }));
       if (updates.length) await base44.entities.TournamentMatch.bulkUpdate(updates);
+      if (champ) await completeTournament();
       setDirty(new Set());
       onSaved?.();
     } finally {
@@ -67,6 +68,14 @@ export default function TournamentBracket({ matches, editable, onSaved, title })
 
   const champRound = rounds[rounds.length - 1];
   const champ = champRound?.items[0]?.winner || "";
+
+  const completeTournament = async () => {
+    const tournaments = await base44.entities.Tournament.list();
+    const t = tournaments.find((x) => x.id === local[0]?.tournamentId);
+    if (t && t.status !== "complete") {
+      await base44.entities.Tournament.update(t.id, { status: "complete" });
+    }
+  };
 
   return (
     <div>
