@@ -8,6 +8,7 @@ import { buildSingleElim, buildWinners, buildLosersBracket, nextPow2 } from "@/l
 import TournamentBracket from "@/components/TournamentBracket";
 import DoubleElimView from "@/components/DoubleElimView";
 import GroupStageView from "@/components/GroupStageView";
+import ImportRegistrations from "@/components/ImportRegistrations";
 
 const FORMAT_LABEL = { single_elim: "Single Elimination", double_elim: "Double Elimination", group_stage: "Group Stage" };
 
@@ -152,6 +153,7 @@ export default function TournamentDetail() {
             </Button>
           </form>
         )}
+        {canEdit && <ImportRegistrations tournamentId={id} existingCount={players.length} onImported={load} />}
         <div className="divide-y divide-white/5">
           {players.length === 0 && <p className="py-4 text-sm text-zinc-500">No players yet.</p>}
           {players.map((p, i) => (

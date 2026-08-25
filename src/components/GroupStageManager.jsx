@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Plus, Trash2, Check } from "lucide-react";
 import { groupStandings, crossSeed, buildPlayoffBracket } from "@/lib/bracket";
+import ImportRegistrations from "@/components/ImportRegistrations";
 
 export default function GroupStageManager({ tournamentId, onBack, editable }) {
   const [tournament, setTournament] = useState(null);
@@ -137,6 +138,7 @@ export default function GroupStageManager({ tournamentId, onBack, editable }) {
             </Button>
           </form>
         )}
+        {editable && <ImportRegistrations tournamentId={tournamentId} existingCount={players.length} onImported={load} />}
         <div className="divide-y divide-white/5">
           {players.length === 0 && <p className="py-4 text-sm text-zinc-500">No players yet.</p>}
           {players.map((p, i) => (
