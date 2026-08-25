@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Plus, Trash2, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight, Plus, Trash2, Check, Flag, RotateCcw } from "lucide-react";
 import { groupStandings, crossSeed, buildPlayoffBracket } from "@/lib/bracket";
 
 export default function GroupStageManager({ tournamentId, onBack, editable }) {
@@ -46,6 +46,15 @@ export default function GroupStageManager({ tournamentId, onBack, editable }) {
   const setGroup = async (pid, group) => { await base44.entities.TournamentPlayer.update(pid, { group }); load(); };
 
   const advanceToGroupStage = async () => {
+    await base44.entities.Tournament.update(tournamentId, { status: "active" });
+    load();
+  };
+
+  const endTournament = async () => {
+    await base44.entities.Tournament.update(tournamentId, { status: "complete" });
+    load();
+  };
+  const reopenTournament = async () => {
     await base44.entities.Tournament.update(tournamentId, { status: "active" });
     load();
   };
@@ -115,10 +124,26 @@ export default function GroupStageManager({ tournamentId, onBack, editable }) {
       <button onClick={onBack} className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-zinc-500 hover:text-red-500 mb-6">
         <ArrowLeft className="w-3.5 h-3.5" />All group stages
       </button>
-      <div className="mb-8">
-        <p className="text-[11px] uppercase tracking-[0.3em] text-red-600 mb-2">Group Stage</p>
-        <h1 className="font-heading text-4xl sm:text-5xl tracking-tight">{tournament.name}</h1>
-        <p className="text-sm text-zinc-500 mt-2">{players.length} players · {groupCount} groups · status: {tournament.status}</p>
+      <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
+        <div>
+          <p className="text-[11px] uppercase tracking-[0.3em] text-red-600 mb-2">Group Stage</p>
+          <h1 className="font-heading text-4xl sm:text-5xl tracking-tight">{tournament.name}</h1>
+          <p className="text-sm text-zinc-500 mt-2">
+            {players.length} players · {groupCount} groups · status:{" "}
+            <span className={tournament.status === "complete" ? "text-green-500 font-medium" : ""}>{tournament.status}</span>
+          </p>
+        </div>
+        {editable && tournament.status !== "setup" && (
+          tournament.status === "complete" ? (
+            <Button onClick={reopenTournament} variant="outline" className="rounded-full px-5 border-white/10 bg-transparent hover:bg-white/5 text-zinc-300">
+              <RotateCcw className="w-4 h-4 mr-2" />Reopen tournament
+            </Button>
+          ) : (
+            <Button onClick={endTournament} className="bg-green-700 hover:bg-green-800 text-white rounded-full px-6">
+              <Flag className="w-4 h-4 mr-2" />End tournament
+            </Button>
+          )
+        )}
       </div>
 
       {/* Players section */}

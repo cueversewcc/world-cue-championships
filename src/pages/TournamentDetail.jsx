@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Zap } from "lucide-react";
+import { Plus, Trash2, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Zap, Flag, RotateCcw } from "lucide-react";
 import { buildSingleElim, buildWinners, buildLosersBracket, nextPow2 } from "@/lib/bracket";
 import TournamentBracket from "@/components/TournamentBracket";
 import DoubleElimView from "@/components/DoubleElimView";
@@ -98,6 +98,15 @@ export default function TournamentDetail() {
     load();
   };
 
+  const endTournament = async () => {
+    await base44.entities.Tournament.update(id, { status: "complete" });
+    load();
+  };
+  const reopenTournament = async () => {
+    await base44.entities.Tournament.update(id, { status: "active" });
+    load();
+  };
+
   const groups = Array.from({ length: tournament.groupCount || 2 }, (_, i) => String.fromCharCode(65 + i));
   const mainMatches = matches.filter((m) => m.bracket === "main");
   const wbMatches = matches.filter((m) => m.bracket === "winners");
@@ -114,8 +123,22 @@ export default function TournamentDetail() {
         <div>
           <p className="text-[11px] uppercase tracking-[0.3em] text-red-600 mb-2">{FORMAT_LABEL[tournament.format]}</p>
           <h1 className="font-heading text-4xl sm:text-5xl tracking-tight">{tournament.name}</h1>
-          <p className="text-sm text-zinc-500 mt-2">{players.length} players · status: {tournament.status}</p>
+          <p className="text-sm text-zinc-500 mt-2">
+            {players.length} players · status:{" "}
+            <span className={tournament.status === "complete" ? "text-green-500 font-medium" : ""}>{tournament.status}</span>
+          </p>
         </div>
+        {canEdit && tournament.status !== "setup" && (
+          tournament.status === "complete" ? (
+            <Button onClick={reopenTournament} variant="outline" className="rounded-full px-5 border-white/10 bg-transparent hover:bg-white/5 text-zinc-300">
+              <RotateCcw className="w-4 h-4 mr-2" />Reopen tournament
+            </Button>
+          ) : (
+            <Button onClick={endTournament} className="bg-green-700 hover:bg-green-800 text-white rounded-full px-6">
+              <Flag className="w-4 h-4 mr-2" />End tournament
+            </Button>
+          )
+        )}
       </div>
 
       <section className="rounded-2xl border border-white/5 bg-white/[0.02] p-5 mb-8">
