@@ -151,9 +151,9 @@ export default function TournamentDetail() {
             <Button type="submit" className="bg-red-600 hover:bg-red-700 text-white rounded-full px-5">
               <Plus className="w-4 h-4 mr-1.5" />Add
             </Button>
+            <ImportRegistrations tournamentId={id} existingNames={players.map((p) => p.name)} onImported={load} />
           </form>
         )}
-        {canEdit && <ImportRegistrations tournamentId={id} existingCount={players.length} onImported={load} />}
         <div className="divide-y divide-white/5">
           {players.length === 0 && <p className="py-4 text-sm text-zinc-500">No players yet.</p>}
           {players.map((p, i) => (

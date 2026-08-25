@@ -3,44 +3,44 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 
-export default function ImportRegistrations({ tournamentId, existingCount, onImported }) {
-  const [pending, setPending] = useState([]);
+export default function ImportRegistrations({ tournamentId, existingNames = [], onImported }) {
+  const [regs, setRegs] = useState([]);
   const [busy, setBusy] = useState(false);
 
-  const load = async () => setPending(await base44.entities.Registration.filter({ status: "pending" }));
+  const load = async () => setRegs(await base44.entities.Registration.list("created_date"));
   useEffect(() => { load(); }, []);
 
+  const available = regs.filter((r) => !existingNames.includes(r.name));
+
   const importAll = async () => {
-    if (!pending.length || busy) return;
+    if (!available.length || busy) return;
     setBusy(true);
     try {
-      const players = pending.map((r, i) => ({
+      const baseOrder = existingNames.length;
+      const players = available.map((r, i) => ({
         tournamentId,
         name: r.name,
-        seed: existingCount + i + 1,
+        seed: baseOrder + i + 1,
         group: "",
-        order: existingCount + i,
+        order: baseOrder + i,
       }));
       await base44.entities.TournamentPlayer.bulkCreate(players);
-      await base44.entities.Registration.bulkUpdate(pending.map((r) => ({ id: r.id, status: "placed", group: "" })));
-      setPending([]);
       onImported?.();
     } finally {
       setBusy(false);
     }
   };
 
-  if (!pending.length) return null;
-
   return (
-    <div className="flex items-center justify-between rounded-lg border border-red-600/20 bg-red-600/[0.04] px-4 py-3 mb-4">
-      <p className="text-xs text-zinc-400">
-        {pending.length} registered player{pending.length > 1 ? "s" : ""} ready to import
-      </p>
-      <Button onClick={importAll} disabled={busy} className="bg-red-600 hover:bg-red-700 text-white rounded-full px-4 h-8 text-xs">
-        <UserPlus className="w-3.5 h-3.5 mr-1.5" />
-        {busy ? "Importing…" : "Import all"}
-      </Button>
-    </div>
+    <Button
+      type="button"
+      onClick={importAll}
+      disabled={busy || !available.length}
+      variant="outline"
+      className="rounded-full px-5 border-white/10 bg-transparent hover:bg-white/5 text-zinc-200"
+    >
+      <UserPlus className="w-4 h-4 mr-1.5" />
+      {busy ? "Importing…" : `Import${available.length ? ` ${available.length}` : ""}`}
+    </Button>
   );
 }
