@@ -111,6 +111,17 @@ export default function Playoffs() {
     } else {
       await base44.entities.PlayoffConfig.create(payload);
     }
+    // Persist champion/runner-up onto the latest completed groups tournament
+    const finalMatch = mainRounds.length > 0 ? mainMatches.find((m) => m.round === mainRounds[mainRounds.length - 1]) : null;
+    const champ = finalMatch?.winner || "";
+    if (champ) {
+      const runnerUp = champ === finalMatch.player1 ? finalMatch.player2 : finalMatch.player1;
+      const allT = await base44.entities.Tournament.list("-updated_date");
+      const target = allT.find((t) => t.category === "groups" && t.status === "complete");
+      if (target && (target.champion !== champ || target.runnerUp !== runnerUp)) {
+        await base44.entities.Tournament.update(target.id, { champion: champ, runnerUp });
+      }
+    }
     setDirty({});
     setSaving(false);
     setEditing(false);

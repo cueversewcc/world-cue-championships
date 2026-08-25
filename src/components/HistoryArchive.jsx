@@ -13,8 +13,14 @@ export default function HistoryArchive() {
       const completed = all.filter((t) => t.status === "complete");
       const withResults = [];
       for (const t of completed) {
-        const matches = await base44.entities.TournamentMatch.filter({ tournamentId: t.id });
-        const { champion, runnerUp } = getTournamentResult(matches, t.format);
+        let champion = t.champion || "";
+        let runnerUp = t.runnerUp || "";
+        if (!champion) {
+          const matches = await base44.entities.TournamentMatch.filter({ tournamentId: t.id });
+          const r = getTournamentResult(matches, t.format);
+          champion = r.champion;
+          runnerUp = r.runnerUp;
+        }
         if (champion) withResults.push({ id: t.id, name: t.name, created_date: t.created_date, champion, runnerUp });
       }
       const map = {};

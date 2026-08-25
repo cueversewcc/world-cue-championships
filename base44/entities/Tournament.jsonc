@@ -47,6 +47,14 @@
       ],
       "default": "setup"
     },
+    "champion": {
+      "type": "string",
+      "default": ""
+    },
+    "runnerUp": {
+      "type": "string",
+      "default": ""
+    },
     "order": {
       "type": "number",
       "default": 0
