@@ -51,6 +51,24 @@ export default function GroupStage() {
     load();
   };
 
+  const active = tournaments.filter((t) => t.status !== "complete");
+  const archived = tournaments.filter((t) => t.status === "complete");
+  const renderCard = (t) => (
+    <div key={t.id} onClick={() => setSelected(t.id)} className="group rounded-2xl border border-white/5 bg-white/[0.02] p-6 hover:border-red-600/30 transition-colors cursor-pointer">
+      <div className="flex items-start justify-between mb-4">
+        <span className="text-[10px] uppercase tracking-[0.15em] px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-400">{t.status}</span>
+        {canEdit && (
+          <button onClick={(e) => { e.stopPropagation(); remove(t.id); }} className="text-zinc-600 hover:text-red-500">
+            <Trash2 className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+      <h3 className="font-heading text-xl tracking-tight mb-2">{t.name}</h3>
+      <p className="text-xs text-zinc-500">{t.groupCount} groups · top {t.advancingCount} advance</p>
+      <p className="text-xs text-zinc-600 mt-1">{t.mainBracketName || "Championship"} · {t.consolationName || "Consolation Cup"}</p>
+    </div>
+  );
+
   if (selected) {
     return <GroupStageManager tournamentId={selected} onBack={() => { setSelected(null); load(); }} editable={canEdit} />;
   }
@@ -107,24 +125,19 @@ export default function GroupStage() {
         </form>
       )}
 
+      {active.length === 0 && <p className="text-sm text-zinc-500 mb-6">No active group stages.</p>}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-
-        {tournaments.map((t) => (
-          <div key={t.id} onClick={() => setSelected(t.id)} className="group rounded-2xl border border-white/5 bg-white/[0.02] p-6 hover:border-red-600/30 transition-colors cursor-pointer">
-            <div className="flex items-start justify-between mb-4">
-              <span className="text-[10px] uppercase tracking-[0.15em] px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-400">{t.status}</span>
-              {canEdit && (
-                <button onClick={(e) => { e.stopPropagation(); remove(t.id); }} className="text-zinc-600 hover:text-red-500">
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-            <h3 className="font-heading text-xl tracking-tight mb-2">{t.name}</h3>
-            <p className="text-xs text-zinc-500">{t.groupCount} groups · top {t.advancingCount} advance</p>
-            <p className="text-xs text-zinc-600 mt-1">{t.mainBracketName || "Championship"} · {t.consolationName || "Consolation Cup"}</p>
-          </div>
-        ))}
+        {active.map(renderCard)}
       </div>
+
+      {archived.length > 0 && (
+        <section className="mt-14">
+          <h2 className="font-heading text-2xl tracking-tight mb-5 text-zinc-500">Archive</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 opacity-70">
+            {archived.map(renderCard)}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

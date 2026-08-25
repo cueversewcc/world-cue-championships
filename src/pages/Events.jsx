@@ -60,6 +60,32 @@ export default function Events() {
     load();
   };
 
+  const active = tournaments.filter((t) => t.status !== "complete");
+  const archived = tournaments.filter((t) => t.status === "complete");
+  const renderCard = (t) => (
+    <Link key={t.id} to={`/events/${t.id}`} className="group rounded-2xl border border-white/5 bg-white/[0.02] p-6 hover:border-red-600/30 transition-colors">
+      <div className="flex items-start justify-between mb-4">
+        <span className={`text-[10px] uppercase tracking-[0.15em] px-2.5 py-1 rounded-full ${FORMAT_BADGE[t.format]}`}>{FORMAT_LABEL[t.format]}</span>
+        {canEdit && (
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              remove(t.id);
+            }}
+            className="text-zinc-600 hover:text-red-500"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+      <h3 className="font-heading text-xl tracking-tight mb-2">{t.name}</h3>
+      <p className="text-xs text-zinc-500">Status: {t.status}</p>
+      {t.format === "group_stage" && (
+        <p className="text-xs text-zinc-600 mt-1">Top {t.advancingCount} advance to {t.mainBracketName || "Championship"} · {t.consolationName}</p>
+      )}
+    </Link>
+  );
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-16">
       <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
@@ -125,32 +151,19 @@ export default function Events() {
         </form>
       )}
 
+      {active.length === 0 && <p className="text-sm text-zinc-500 mb-6">No active tournaments.</p>}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-
-        {tournaments.map((t) => (
-          <Link key={t.id} to={`/events/${t.id}`} className="group rounded-2xl border border-white/5 bg-white/[0.02] p-6 hover:border-red-600/30 transition-colors">
-            <div className="flex items-start justify-between mb-4">
-              <span className={`text-[10px] uppercase tracking-[0.15em] px-2.5 py-1 rounded-full ${FORMAT_BADGE[t.format]}`}>{FORMAT_LABEL[t.format]}</span>
-              {canEdit && (
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    remove(t.id);
-                  }}
-                  className="text-zinc-600 hover:text-red-500"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-            <h3 className="font-heading text-xl tracking-tight mb-2">{t.name}</h3>
-            <p className="text-xs text-zinc-500">Status: {t.status}</p>
-            {t.format === "group_stage" && (
-              <p className="text-xs text-zinc-600 mt-1">Top {t.advancingCount} advance to {t.mainBracketName || "Championship"} · {t.consolationName}</p>
-            )}
-          </Link>
-        ))}
+        {active.map(renderCard)}
       </div>
+
+      {archived.length > 0 && (
+        <section className="mt-14">
+          <h2 className="font-heading text-2xl tracking-tight mb-5 text-zinc-500">Archive</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 opacity-70">
+            {archived.map(renderCard)}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

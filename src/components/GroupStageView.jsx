@@ -258,7 +258,7 @@ export default function GroupStageView({ tournament, players, matches, editable,
       {editable && (
         <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/[0.02] px-5 py-4">
           <div>
-            <p className="text-sm font-medium">Advance to brackets</p>
+            <p className="text-sm font-medium">Advance to playoffs</p>
             <p className="text-xs text-zinc-500 mt-1">
               Top {tournament.advancingCount || 16} qualify for the {tournament.mainBracketName || "Championship"}; the rest enter the {tournament.consolationName || "Consolation Cup"}.
             </p>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Plus, Trash2, Check, Flag, RotateCcw } from "lucide-react";
+import { ArrowLeft, ArrowRight, Plus, Trash2, Check } from "lucide-react";
 import { groupStandings, crossSeed, buildPlayoffBracket } from "@/lib/bracket";
 
 export default function GroupStageManager({ tournamentId, onBack, editable }) {
@@ -46,15 +46,6 @@ export default function GroupStageManager({ tournamentId, onBack, editable }) {
   const setGroup = async (pid, group) => { await base44.entities.TournamentPlayer.update(pid, { group }); load(); };
 
   const advanceToGroupStage = async () => {
-    await base44.entities.Tournament.update(tournamentId, { status: "active" });
-    load();
-  };
-
-  const endTournament = async () => {
-    await base44.entities.Tournament.update(tournamentId, { status: "complete" });
-    load();
-  };
-  const reopenTournament = async () => {
     await base44.entities.Tournament.update(tournamentId, { status: "active" });
     load();
   };
@@ -133,17 +124,6 @@ export default function GroupStageManager({ tournamentId, onBack, editable }) {
             <span className={tournament.status === "complete" ? "text-green-500 font-medium" : ""}>{tournament.status}</span>
           </p>
         </div>
-        {editable && tournament.status !== "setup" && (
-          tournament.status === "complete" ? (
-            <Button onClick={reopenTournament} variant="outline" className="rounded-full px-5 border-white/10 bg-transparent hover:bg-white/5 text-zinc-300">
-              <RotateCcw className="w-4 h-4 mr-2" />Reopen tournament
-            </Button>
-          ) : (
-            <Button onClick={endTournament} className="bg-green-700 hover:bg-green-800 text-white rounded-full px-6">
-              <Flag className="w-4 h-4 mr-2" />End tournament
-            </Button>
-          )
-        )}
       </div>
 
       {/* Players section */}

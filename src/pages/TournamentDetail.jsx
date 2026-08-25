@@ -113,6 +113,7 @@ export default function TournamentDetail() {
   const lbMatches = matches.filter((m) => m.bracket === "losers");
   const finalMatches = matches.filter((m) => m.bracket === "final");
   const hasBracket = mainMatches.length > 0 || wbMatches.length > 0;
+  const isPlayoffPhase = tournament.format !== "group_stage" || hasBracket;
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
@@ -128,7 +129,7 @@ export default function TournamentDetail() {
             <span className={tournament.status === "complete" ? "text-green-500 font-medium" : ""}>{tournament.status}</span>
           </p>
         </div>
-        {canEdit && tournament.status !== "setup" && (
+        {canEdit && tournament.status !== "setup" && isPlayoffPhase && (
           tournament.status === "complete" ? (
             <Button onClick={reopenTournament} variant="outline" className="rounded-full px-5 border-white/10 bg-transparent hover:bg-white/5 text-zinc-300">
               <RotateCcw className="w-4 h-4 mr-2" />Reopen tournament
