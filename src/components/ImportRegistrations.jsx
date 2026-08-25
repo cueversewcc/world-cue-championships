@@ -7,19 +7,30 @@ export default function ImportRegistrations({ tournamentId, existingNames = [], 
   const [regs, setRegs] = useState([]);
   const [busy, setBusy] = useState(false);
 
-  const load = async () => setRegs(await base44.entities.Registration.list("created_date"));
+  const load = async () => {
+    const names = new Set();
+    try {
+      const res = await base44.functions.invoke("getRoster", {});
+      for (const p of res.data?.players || []) if (p.name) names.add(p.name);
+    } catch (e) { /* roster unavailable */ }
+    try {
+      const regs = await base44.entities.Registration.list("created_date");
+      for (const r of regs) if (r.name) names.add(r.name);
+    } catch (e) { /* registrations unavailable */ }
+    setRegs([...names]);
+  };
   useEffect(() => { load(); }, []);
 
-  const available = regs.filter((r) => !existingNames.includes(r.name));
+  const available = regs.filter((name) => !existingNames.includes(name));
 
   const importAll = async () => {
     if (!available.length || busy) return;
     setBusy(true);
     try {
       const baseOrder = existingNames.length;
-      const players = available.map((r, i) => ({
+      const players = available.map((name, i) => ({
         tournamentId,
-        name: r.name,
+        name,
         seed: baseOrder + i + 1,
         group: "",
         order: baseOrder + i,
