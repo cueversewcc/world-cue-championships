@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Pencil, Check, Plus, Trash2 } from "lucide-react";
+import HistoryArchive from "@/components/HistoryArchive";
 
 export default function History() {
   const { user } = useAuth();
@@ -72,9 +73,11 @@ export default function History() {
         )}
       </div>
 
+      <HistoryArchive />
+
       <div className="space-y-14">
         {view.length === 0 && !editing && (
-          <p className="text-sm text-zinc-500">No tournaments archived yet.</p>
+          <p className="text-sm text-zinc-500">No custom entries.</p>
         )}
         {view.map((t, i) => (
           <section key={t.id || `new-${i}`} className="rounded-2xl border border-white/5 bg-white/[0.02] p-6">

@@ -264,6 +264,31 @@ export const applyDoubleElim = (wb, lb, final) => {
   return { wb, lb, final };
 };
 
+// Derive champion & runner-up from a completed tournament's matches.
+export const getTournamentResult = (matches, format) => {
+  if (format === "double_elim") {
+    const wb = matches.filter((m) => m.bracket === "winners");
+    const lb = matches.filter((m) => m.bracket === "losers");
+    const final = matches.filter((m) => m.bracket === "final");
+    const champion = doubleElimChamp(wb, lb, final);
+    const f1 = final.find((f) => f.slot === 1);
+    const f0 = final.find((f) => f.slot === 0);
+    let runnerUp = "";
+    if (f1 && f1.winner) runnerUp = f1.winner === f1.player1 ? f1.player2 : f1.player1;
+    else if (f0 && f0.winner) runnerUp = f0.winner === f0.player1 ? f0.player2 : f0.player1;
+    return { champion, runnerUp };
+  }
+  const main = matches.filter((m) => m.bracket === "main");
+  const maxRound = main.reduce((mx, m) => Math.max(mx, m.round), -1);
+  const finalMatch = main.find((m) => m.round === maxRound && m.slot === 0);
+  if (finalMatch && finalMatch.winner) {
+    const champion = finalMatch.winner;
+    const runnerUp = finalMatch.winner === finalMatch.player1 ? finalMatch.player2 : finalMatch.player1;
+    return { champion, runnerUp };
+  }
+  return { champion: "", runnerUp: "" };
+};
+
 export const doubleElimChamp = (wb, lb, final) => {
   const f1 = final.find((f) => f.slot === 1);
   const f0 = final.find((f) => f.slot === 0);
